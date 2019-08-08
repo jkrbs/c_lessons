@@ -1,0 +1,38 @@
+* 1st lesson
+** Make
+** miniProgram zum Uben (Primzahlen finden)
+** function pointers
+* 2rd lesson
+** Debugging
+*** gdb
+*** valgrind
+* 3rd lessen
+** makreos
+** variadic functions
+** Datenstrukturen
+* 4nd lesson
+** pthreads Thread bauen und Mutex
+** primzahlfinden parallelisieren
+** gprof
+* 5th lesson
+** libraries linux, wenn harter Bedarf ist, dann grob auf Windows
+** Baut eure Primzahlfunktion in eine Library
+* 6th lesson
+** sys calls
+** file handling
+** file descriptoren
+** fork, exec, execve, mmap
+** interrupt handling signal() glibc wrapper
+* 7th lesson
+** netzwerk
+*** Windows/Linux tcp socket ggf noch udp
+*** ggf domain sockets
+** kleinen udp chat bauen
+* 8th lesson
+** ncurses
+** mini rogue like bauen
+* 9th lesson
+** rougue like mit netzwerk
+** Binaerprotokoll mit spass bei binary operations
+* wenn wir am Ende Zeit haben
+** pthreads Contition variables und atomics
