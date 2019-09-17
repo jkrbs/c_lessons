@@ -1,0 +1,65 @@
+% document
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{listings} \usepackage{csquotes} \usepackage{hyperref}
+% theme
+\usetheme{metropolis}
+% packages
+\title{Lesson 2: Debugging} \author{Christian Schwarz, Jakob Krebs}
+
+\begin{document}
+\maketitle
+\begin{frame}{Roadmap}
+  \tableofcontents
+\end{frame}
+\section{basics}
+\begin{frame}{types of errors}
+  \begin{itemize}
+  \item compiletime errors
+  \item runtime errors
+  \end{itemize}
+\end{frame}
+\section{gdb}
+\begin{frame}[fragile]{gdb}
+\begin{lstlisting}
+    # compile our program with debugging symbols
+    $ gcc -g foo.c -o foo
+    # open it with gdb
+    $ gdb foo
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{Breakpoints}
+\begin{lstlisting}
+    # set breakpoint at line 12
+    (gdb) break 12
+    (gdb) run
+    [...]
+    Breakpoint 1, main () at foo.c:12
+    12 int[]* bla= malloc(20 * sizeof(int));
+\end{lstlisting}
+\end{frame}
+\begin{frame}[fragile]{Inspection}
+\begin{lstlisting}
+    # how did we end up here?
+    (gdb) backtrace
+    (gdb) run
+    [...]
+    Breakpoint 1, main () at foo.c:12
+    12 int[]* bla= malloc(20 * sizeof(int));
+\end{lstlisting}
+\end{frame}
+\section{valgrind}
+\begin{frame}{bugs reported by valgrind}
+  \begin{itemize}
+  \item usage of uninitialized memory
+  \item use after free
+  \item using memory beyond alloced memory
+  \item memory leaks
+  \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{usage}
+\begin{lstlisting}
+        $ valgrind --tool=memcheck --leak-check=yes your_binary
+\end{lstlisting}
+\end{frame}
+
+\end{document}
