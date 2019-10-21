@@ -1,6 +1,7 @@
 % document
 \documentclass[10pt,graphics,aspectratio=169,table]{beamer}
 \usepackage{listings} \usepackage{csquotes} \usepackage{hyperref}
+\usepackage{tabularx}
 % theme
 \usetheme{metropolis}
 % packages
@@ -47,6 +48,22 @@
     12 int[]* bla= malloc(20 * sizeof(int));
 \end{lstlisting}
 \end{frame}
+\begin{frame}{useful gdb commands}
+		\begin{tabular}{|l|l|}
+			\hline
+			\textbf{file} & load program\\\hline
+			\textbf{r[un]} & execute program\\\hline
+			\textbf{b[reak]} & set breakpoint\\\hline
+			\textbf{p[rint]} & print variable\\\hline
+			\textbf{w[atch]} & break and print variable when it changes\\\hline
+			\textbf{n[ext]} & execute next line and break\\\hline
+			\textbf{s[tep]} & execute next instruction and break\\\hline
+			\textbf{c[ontinue]} & execute until next breakpoint\\\hline
+			\textbf{backtrace} / \textbf{bt} & How did I end up here?\\\hline
+		\end{tabular}
+        \footnote{this table was stolen from \url{https://github.com/fsr/c-lessons/blob/master/latex/slides/11_debugging.tex}}
+\end{frame}
+
 \section{valgrind}
 \begin{frame}{bugs reported by valgrind}
   \begin{itemize}
