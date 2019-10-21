@@ -56,12 +56,12 @@
 \end{frame} 
 \begin{frame}[fragile]{usage}
   Debug:
-  \begin{lstlisting}
+    \begin{lstlisting}[numbers=none]
     $ gcc -g -Wall -o output input.c
   \end{lstlisting}
   \bigskip
   Release:
-  \begin{lstlisting}
+    \begin{lstlisting}[numbers=none]
     $ gcc -Wall -O2 -o output input1.c input2.c
     $ strip output
   \end{lstlisting}
@@ -76,7 +76,7 @@
 \end{frame}
 
 \begin{frame}[fragile]{Makefile}
-  \begin{lstlisting}
+    \begin{lstlisting}[language=make]
     CC := gcc
     CFLAGS := -Wall
     DFlAGS := $(CFLAGS) -g
@@ -103,7 +103,7 @@
   write your makefile in a file called \enquote{Makefile} in the root directory
   of your project
   
-  \begin{lstlisting}
+    \begin{lstlisting}[numbers=none]
     $ make # in the root directory of your project
   \end{lstlisting}
   
@@ -124,12 +124,12 @@
   \end{itemize}
 \end{frame}
 \begin{frame}[fragile]{help for additional tasks: memory allocation}
-  \begin{lstlisting}
+    \begin{lstlisting}[language=c]
     void* malloc(size_t size);
     void free(void* ptr);
   \end{lstlisting}
   example:
-  \begin{lstlisting}
+    \begin{lstlisting}[language=c]
     #include <stdio.h>
     int main() {
       int* foo = malloc(100* sizeof(int));
@@ -142,7 +142,7 @@
   \end{lstlisting}
 \end{frame}
 \begin{frame}[fragile]{help for additional tasks: file io}
-  \begin{lstlisting}
+    \begin{lstlisting}[language=c]
     FILE* fopen(const char* path, const char* permissions);
     size_t fwrite(const void* ptr, size_t size, size_t cnt, 
     FILE* stream);
@@ -151,7 +151,7 @@
     int fclose(FILE* filetoclose)
   \end{lstlisting}
   example:
-  \begin{lstlisting}
+    \begin{lstlisting}[language=c]
     int main() {
       FILE* f = fopen("foo.txt", "w");
       char* data = "lololol\n";
