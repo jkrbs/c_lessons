@@ -87,15 +87,12 @@ $ brew install gcc
 		\item Fill it as follows:
 	\end{itemize}
 	\begin{lstlisting}
-#include <stdio.h>
-
-int main(void) {
-	printf("Hello World!\n");
-	/* Print "Hello World!" on the
-	   command line */
-	return 0;
-}
-\end{lstlisting}
+        int puts(char* c);
+        int main(void) {
+            puts("Hello World!");
+            return 0;
+        }
+    \end{lstlisting}
 \end{frame}
 \begin{frame}[fragile]{From source to binary}
     \begin{figure}
@@ -118,18 +115,14 @@ int main(void) {
 #include <stdio.h>
 
 int main(void) {
-
-	printf("Hello World!\n");
-	/* Print "Hello World!" on the
-	   command line */
-
+	puts("Hello World!");
 	return 0;
 }
 \end{lstlisting}
 		\column{.4\textwidth}
 		
 		\ \\$\left. \begin{array}{c}\\\end{array}\right\rbrace $ Preprocessor statements
-		\ \\\ \\$\left. \begin{array}{c}\\\\\\\\\\\\\end{array}\right\rbrace $ Main function
+		\ \\\ \\$\left. \begin{array}{c}\\\\\\\\\\\end{array}\right\rbrace $ Main function
 	\end{columns}
 \end{frame}
 \begin{frame}[fragile]{Preprocessor statements}
@@ -142,7 +135,7 @@ int main(void) {
 \end{lstlisting}
 	\begin{itemize}
 		\item Includes the \textit{input/output header} from the \textbf{C standard library}
-		\item Needed to use \textit{printf()}
+		\item Needed to use \textit{puts()}
 	\end{itemize}\ \\ \ \\
 	Preprocessor statements have way more use cases,\\
 	but they form their own language which is very different from actual C.\\
@@ -186,7 +179,7 @@ int main(void) {
 		\item End with a \textit{;} (semicolon)
 	\end{itemize}
 	\begin{lstlisting}
-	printf("Hello World!\n");
+	puts("Hello World!");
 \end{lstlisting} \ \\ \ \\
 	\begin{itemize}
 		\item Here is the empty statement:
@@ -233,7 +226,7 @@ int main(void) {
 	\begin{lstlisting}
 #include <stdio.h>
 int
-main	(        void ){printf("Hello World!\n");
+main	(        void ){puts("Hello World!");
 		// Prints
 /*"Hello World!"			*/
 		return 0;}
@@ -250,13 +243,6 @@ main	(        void ){printf("Hello World!\n");
 		\item Leave blank lines between different parts of the program
 		\item Use \textit{spaces} and \textit{newlines} consistently
 	\end{itemize}
-	\begin{lstlisting}[showspaces=true,showtabs=true]
-int main(void) {
-	printf("Hello World!");
-	/* Prints "Hello World!" */
-	return 0;
-}
-\end{lstlisting}
 \end{frame}
 
 
