@@ -1,0 +1,51 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 4: A simple Calculator}
+Create A C programm that reads in 2 integers and an operator (+,-,* or /)
+and calculates the result. 
+
+\end{frame}
+
+\begin{frame}[fragile]{Task 4: Scanf Reminder}
+To read in a single number you can use 
+\begin{codeblock}
+int i;
+scanf("%d", &i);
+\end{codeblock}
+
+To read in a single character you can use
+\begin{codeblock}
+    char c;
+    scanf("%c", &c);
+\end{codeblock}
+
+And to read in a combined string you can use
+\begin{codeblock}
+    int left;
+    int right;
+    char op;
+    scanf("%d %c %d", &left, &op, &right);
+\end{codeblock}
+
+Or you could just request the input on individual lines
+\end{frame}
+
+\begin{frame}[fragile]{Task 4: More Tipps}
+Tipp 2:
+it is possible to \code{switch} over a \code{char},
+and use \code{case '*':} and the likes 
+
+Tipp3: If you want to bother with error checking, remember that scanf returns
+the number of successfully read arguments (0 if none).
+\end{frame}
+
+
+\begin{frame}[fragile]{Task 4.1: Advanced Calculator}
+\textcolor{red}{Very Advanced, only if you seek a challange:} 
+Make it support complex expressions, including parentheses.
+(For help check the wikipedia page on precedence climbing)
+\end{frame}
+
+\end{document}
