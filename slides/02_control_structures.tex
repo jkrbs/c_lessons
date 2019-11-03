@@ -14,59 +14,82 @@
 \maketitle
 
 \begin{frame}{Contents}
-	\tableofcontents
+    \tableofcontents
 \end{frame}
 
-\lstset{
+%TODO: extract this into a module, i don't know how thow, jakob please :)
+\newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[
+    language=C,
     showstringspaces=false,
     basicstyle=\ttfamily,
+    columns=flexible,
     keywordstyle=\color{blue},
-    commentstyle=\color[green]{0.6},
-    stringstyle=\color[RGB]{255,150,75}
-}
+    commentstyle=\color{olive},
+]$#1$}}
 \definecolor{lightlightgray}{RGB}{230,230,230}
-\newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[language=C]$#1$}}
+\lstnewenvironment{codeblock}
+    {
+          \minipage{\textwidth} 
+          \lstset{
+            language=C,
+            backgroundcolor=\color{lightlightgray},
+            showstringspaces=false,
+            basicstyle=\ttfamily,
+            columns=fixed,
+            keywordstyle=\color{blue},
+            commentstyle=\color{olive},
+            breaklines=false,
+            captionpos=b,
+            frame=bottomline,
+            extendedchars=true,
+          }
+    }
+    {
+        \endminipage
+    }
+
 
 \section{Source Code and Solutions}
 
 \section{Variables and Types}
 \begin{frame}{Integers}
-	\begin{itemize}
+    \begin{itemize}
         \item Keywords: \code{int}, \code{short}, \code{long}, \code{long long}
-		\item Stored as a binary number with fixed length
+        \item Stored as a binary number with fixed length
         \item Can be \code{signed} or \code{unsigned} (undefined, but can be overridden using signed char and unsigned char)
-		\item Actual size of \code{int}, \code{short}, \code{long} depends on architecture
-        \item For definite sizes: include stddef.h which adds types like \code{size_t}, \code{int32t}, \code{uint64_t}
-	\end{itemize}
+        \item Actual size of \code{int}, \code{short}, \code{long} depends on architecture
+        \item For definite sizes: include stddef.h which adds types like \code{size_t}, \code{int32_t}, \code{uint64_t}
+    \end{itemize}
 \end{frame}
 \begin{frame}[fragile]{float}
-\begin{itemize}
-		\item Keywords: \code{float}, \code{double}, \code{long double}
-		\item Stored as specified in \textit{IEEE 754 Standard} TL;DR
-		\item Special values for $\infty$, $-\infty$, NaN
-		\item Useful for fractions and very large numbers
-		\item Type a decimal point instead of a comma!
-	\end{itemize}\ \\
-	\ \\
-	Example:
-	\begin{lstlisting}[numbers=none]
-float x = 0.125;			/* Precision: 7 to 8 digits */
-double y = 111111.111111;	/* Precision: 15 to 16 digits */
-\end{lstlisting}
+    \begin{itemize}
+        \item Keywords: \code{float}, \code{double}, \code{long double}
+        \item Stored as specified in \textit{IEEE 754 Standard} TL;DR
+        \item Special values for $\infty$, $-\infty$, NaN
+        \item Useful for fractions and very large numbers
+        \item Type a decimal point instead of a comma!
+    \end{itemize}\ \\
+    \ \\
+    Example:
+    \begin{codeblock}
+float x = 0.125;             /* Precision: 7 to 8 digits */
+double y = 111111.111111;    /* Precision: 15 to 16 digits */
+    \end{codeblock}
+
 \end{frame}
 \begin{frame}[fragile]{Characters}
-	\begin{itemize}
-		\item Keyword: \code{char}
-		\item Can be \code{signed}(default) or \code{unsigned}	
-		\item Size: 1 Byte (8 Bit) on almost every architecture
-		\item Intended to represent a single character
-		\item Stores its \textit{ASCII} number (e.g. 'A' $\Rightarrow$ 65)
-	\end{itemize}\ \\
-	\ \\
-	You can define a \code{char} either by its ASCII number or by its symbol:
-	\begin{lstlisting}[numbers=none]
+    \begin{itemize}
+        \item Keyword: \code{char}
+        \item Can be \code{signed}(default) or \code{unsigned}    
+        \item Size: 1 Byte (8 Bit) on almost every architecture
+        \item Intended to represent a single character
+        \item Stores its \textit{ASCII} number (e.g. 'A' $\Rightarrow$ 65)
+    \end{itemize}\ \\
+    \ \\
+    You can define a \code{char} either by its ASCII number or by its symbol:
+    \begin{lstlisting}[numbers=none]
 char a = 65;
-char b = 'A';	/* use single quotation marks */
+char b = 'A';    /* use single quotation marks */
 \end{lstlisting}
 \end{frame}
 
