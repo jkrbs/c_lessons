@@ -1,4 +1,5 @@
 *.log
+.vscode/**
 *.nav
 *.toc
 *.vrb
@@ -9,3 +10,5 @@
 *.pdf
 *.aux
 *.fdb_latexmk
+*.bbl
+*.blg
