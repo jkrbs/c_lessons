@@ -181,6 +181,19 @@ while(true){
 \subsection{for loop}
 
 \section{format strings}
-
+\begin{frame}{format strings}
+The format string determines how the value is interpreted.
+	To avoid compiler warnings, only use the following combinations: \\ \ \\
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{type} & \textbf{description} & \textbf{type of argument} \\\hline
+		\%c & single character & char, int (if $<=$ 255) \\\hline
+		\%d & decimal number & char, int \\\hline
+		\%u & unsigned decimal number & unsigned char, unsigned int \\\hline
+		\%X & hexadecimal number & char, int \\\hline
+		\%ld & long decimal number & long \\\hline
+		\%f & floating point number & float, double \\\hline
+	\end{tabular}
+\end{frame}
 \section{functions}
 \end{document}
