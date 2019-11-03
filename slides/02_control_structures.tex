@@ -24,7 +24,7 @@
     basicstyle=\ttfamily,
     columns=flexible,
     keywordstyle=\color{blue},
-    commentstyle=\color{olive},
+    commentstyle=\color{gray},
 ]$#1$}}
 \definecolor{lightlightgray}{RGB}{230,230,230}
 \lstnewenvironment{codeblock}
@@ -37,10 +37,9 @@
             basicstyle=\ttfamily,
             columns=fixed,
             keywordstyle=\color{blue},
-            commentstyle=\color{olive},
+            commentstyle=\color{gray},
             breaklines=false,
             captionpos=b,
-            frame=bottomline,
             extendedchars=true,
           }
     }
@@ -87,16 +86,43 @@ double y = 111111.111111;    /* Precision: 15 to 16 digits */
     \end{itemize}\ \\
     \ \\
     You can define a \code{char} either by its ASCII number or by its symbol:
-    \begin{lstlisting}[numbers=none]
+    \begin{codeblock}
 char a = 65;
 char b = 'A';    /* use single quotation marks */
-\end{lstlisting}
+    \end{codeblock}
 \end{frame}
 
 
-\section{Controlstructures}
+\section{Control Structures}
 
 \subsection{if}
+\begin{frame}[fragile]{if statements}
+    \begin{itemize}
+    \item basic usage:
+        \begin{codeblock} 
+if(3 > 2){  // arbitrary condition
+    //this gets executed IF the condition evaluates to true
+}
+        \end{codeblock}
+    \item short form (use it only for short and simple things):
+        \begin{codeblock} 
+if(3 > 2) bar();
+        \end{codeblock}
+
+    \item else blocks:
+\begin{codeblock} 
+if(foo()){ 
+}
+else if(bar()){ 
+}
+else{ 
+}
+\end{codeblock}
+
+what we really use here is the shorthand notation on the else block
+
+\end{itemize}
+\end{frame}
 
 \subsection{switch case}
 
