@@ -189,26 +189,6 @@ else{
     \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{switch statements}
-    \begin{codeblock}
-switch(command_that_returns_a_status_code()){
-    case 0: break; //everything is ok
-    case 1: puts("we ran out of disk space"); break;
-    case 2: {
-        puts("something terrible happened.");
-        puts("have you tried switching it off and on again?");
-    }break;
-    case 17: puts("foo"); //fallthrough! missing break (or intended??)
-    case 144: puts("bar"); break;
-    default: puts("this should never happen(TM)");
-}
-    \end{codeblock}
-    Every case must be terminated by a \code{break;} statement, otherwise the
-    following case(s) also get executed. If this is really your intention,
-    which happens very rarely, put a comment like \code{//fallthrough},
-    since this is a common bug
-\end{frame}
-
 \begin{frame}[fragile]{basic while statements}
     \begin{codeblock}
 int i = 0;
@@ -283,6 +263,42 @@ for (int i = 1; i <= 10; ++i){
         \item \textit{i, j, k} are commonly used identifiers for the index
     \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]{switch statements}
+    Switch statements are useful when you have lots of different \code{if}
+    cases and know all possible cases at compile time. 
+    \begin{codeblock}
+switch(command_that_returns_a_status_code()){
+    case 0: break; //everything is ok
+    // missing break! fallthrough! (or intended??)
+    case 1: puts("we ran out of disk space"); 
+    case 17: puts("foo"); break;
+}
+    \end{codeblock}
+
+    Depending on the result of the function, the switch jumps to the respective
+    \code{case}. Every \code{case} must be terminated by a 
+    \code{break;} statement, otherwise the following \code{case}(s) also get
+    executed. If this is really your intention, which happens very rarely,
+    put a comment like \code{//fallthrough}, since this is a common bug.
+\end{frame}
+
+\begin{frame}[fragile]{switch statements 2}
+\begin{codeblock}
+    switch(foo()){
+        case 0: puts(" :)"); break;
+        case 2: {
+            puts("some logging output");
+            puts("more logging output");
+        }break;
+        default: puts("this should never happen(TM)"); 
+    }
+    \code{case} bodys can be blocks. Remember that you still need a break 
+    after the block though! The \code{default} case gets used if no other once
+    matches. If it is the last case, you may leave out the \code{break}.
+\end{codeblock}
+\end{frame}
+
 
 \section{Functions}
 \begin{frame}[fragile]{Functions}
