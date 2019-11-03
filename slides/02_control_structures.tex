@@ -286,30 +286,32 @@ for (int i = 1; i <= 10; ++i){
 
 \section{Functions}
 \begin{frame}[fragile]{Functions}
-    \begin{itemize}
-        \item
-            a regular function has a return type, a name, parameters and a body
-            \begin{codeblock}
+    A regular function has a return type, a name, parameters and a body
+    \begin{codeblock}
 int add(int a, int b){
     printf("%i + %i = %i\n", a, b, a + b);
     return a + b;
 }
-            \end{codeblock}
-        \item 
-            \code{printf} is also a function but the number of its arguments 
-            can vary (\code{varargs}). we will talk about this later.
+    \end{codeblock}
+
+    \code{printf} is also a function but the number of its arguments 
+    can vary (\code{varargs}). we will talk about this later.
+\end{frame}
+\begin{frame}[fragile]{Void Functions}
+    \begin{itemize}
+       
         \item
-            a function can also return nothing,
+            A function can also return nothing,
             the type of \textit{"nothing"} is \code{void}.
         \item
             \code{void} returning functions should not 
             contain \code{return} statements
         \item 
-            functions can call other functions 
+            Functions can call other functions 
             (including themselves, which is called recursion)
   
         \item 
-            a function with no parameters should have \code{(void)} instead of 
+            A function with no parameters should have \code{(void)} instead of 
             \code{()} as it's parameter specification,
             as C will otherwise treat the numer
             of parameters as undefined
