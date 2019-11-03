@@ -17,7 +17,7 @@
     \tableofcontents
 \end{frame}
 
-%TODO: extract this into a module, i don't know how thow, jakob please :)
+%TODO: extract this into a module, i don't know how though, jakob please :)
 \newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[
     language=C,
     showstringspaces=false,
@@ -60,7 +60,8 @@
         \item For definite sizes: include stddef.h which adds types like \code{size_t}, \code{int32_t}, \code{uint64_t}
     \end{itemize}
 \end{frame}
-\begin{frame}[fragile]{float}
+
+\begin{frame}[fragile]{Floating Point Numbers}
     \begin{itemize}
         \item Keywords: \code{float}, \code{double}, \code{long double}
         \item Stored as specified in \textit{IEEE 754 Standard} TL;DR
@@ -94,8 +95,6 @@ char b = 'A';    /* use single quotation marks */
 
 
 \section{Control Structures}
-
-\subsection{if}
 \begin{frame}[fragile]{if statements}
     \begin{itemize}
     \item basic usage:
@@ -110,21 +109,39 @@ if(3 > 2) bar();
         \end{codeblock}
 
     \item else blocks:
-\begin{codeblock} 
+        \begin{codeblock} 
 if(foo()){ 
 }
 else if(bar()){ 
 }
 else{ 
 }
-\end{codeblock}
+        \end{codeblock}
 
-what we really use here is the shorthand notation on the else block
+        what we really use here is the shorthand notation on the else block
 
-\end{itemize}
+    \end{itemize}
 \end{frame}
 
-\subsection{switch case}
+\begin{frame}[fragile]{switch statements}
+    \begin{codeblock}
+switch(command_that_returns_a_status_code()){
+    case 0: break; //everything is ok
+    case 1: puts("we ran out of disk space"); break;
+    case 2: {
+        puts("something terrible happened.");
+        puts("have you tried switching it off and on again?");
+    }break;
+    case 17: puts("foo"); //fallthrough! missing break (or intended??)
+    case 144: puts("bar"); break;
+    default: puts("this should never happen(TM)");
+}
+    \end{codeblock}
+    Every case must be terminated by a \code{break;} statement, otherwise the 
+    following case(s) also get executed. If this is really your intention,
+    which happens very rarely, put a comment like \code{//fallthrough}, 
+    since this is a common bug
+\end{frame}
 
 \subsection{while}
 
