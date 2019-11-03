@@ -1,6 +1,7 @@
 % document
 \documentclass[10pt,graphics,aspectratio=169,table]{beamer}
 \usepackage{listings}
+\usepackage{../code}
 \usepackage{csquotes}
 \usepackage{hyperref}
 \usepackage{xcolor}
@@ -16,36 +17,6 @@
 \begin{frame}{Contents}
     \tableofcontents
 \end{frame}
-
-%TODO: extract this into a module, i don't know how though, jakob please :)
-\newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[
-    language=C++, %C++ gives us true and false
-    showstringspaces=false,
-    basicstyle=\ttfamily,
-    columns=flexible,
-    keywordstyle=\color{blue},
-    commentstyle=\color{gray},
-]$#1$}}
-\definecolor{lightlightgray}{RGB}{230,230,230}
-\lstnewenvironment{codeblock}
-    {
-          \minipage{\textwidth} 
-          \lstset{
-            language=C++,
-            backgroundcolor=\color{lightlightgray},
-            showstringspaces=false,
-            basicstyle=\ttfamily,
-            columns=fixed,
-            keywordstyle=\color{blue},
-            commentstyle=\color{gray},
-            breaklines=false,
-            captionpos=b,
-            extendedchars=true,
-          }
-    }
-    {
-        \endminipage
-    }
 
 
 \section{Source Code and Solutions}
