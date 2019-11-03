@@ -1,0 +1,21 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 4: Prime Numbers}
+Create A C programm that prints out the prime numbers in ascending order.
+\end{frame}
+
+\begin{frame}[fragile]{Task 4: Tipps}
+Tipp 1: 
+A simple way to check for primes is to compare them to all smaller numbers.
+If a divisor is found, its not prime, otherwise it is. 
+
+Tipp 2:
+To check whether an integer is evenly divisible by another, you can use
+\code{(my_potential_prime \% my_divisor == 0)}
+
+Tipp3: You might want to create a helper function \code{is_prime} that checks 
+whether an individual number is prime.
+\end{frame}
+\end{document}
