@@ -265,25 +265,34 @@ int add(int a, int b){
     return a + b;
 }
             \end{codeblock}
+        \item 
+            \code{printf} is also a function but the number of its arguments 
+            can vary (\code{varargs}). we will talk about this later.
         \item
             a function can also return nothing,
-            the type of nothing is \code{void}.
+            the type of \textit{"nothing"} is \code{void}.
         \item
-            \code{void} functions should not contain \code{return} statements
-        \item
-            functions can call other functions (including themselves)
+            \code{void} returning functions should not 
+            contain \code{return} statements
+        \item 
+            functions can call other functions 
+            (including themselves, which is called recursion)
+  
+        \item 
+            a function with no parameters should have \code{(void)} instead of 
+            \code{()} as it's parameter specification,
+            as C will otherwise treat the numer
+            of parameters as undefined
             \begin{codeblock}
-int multiply(int a, int b){
-    if(a == 0) return 0;
-    if(a == 1) return y;
-    return add(b, multiply(--a, b));
+void foo(void){
+    puts("I'm a very boring function :(");
 }
             \end{codeblock}
     \end{itemize}
 
 \end{frame}
 
-\section{Enumerations}
+\section{Complex Data Types}
 
 \begin{frame}[fragile]{Enumerations}
     Oftentimes in Code you want to differentiate between a fixed set of Options.
@@ -323,5 +332,66 @@ switch(myday){
     \end{codeblock}
 \end{frame}
 
+\begin{frame}[fragile]{Structs}
+    The basic building block of all data handling in C is the \code{struct}.
+    Essentially it's just the idea to bundle up multiple variables as a reusable
+    group. Like enums, structs are types and you can have variables of 
+    that are \textbf{instances} of the struct.
+    \begin{codeblock}
+struct point{
+    int x;
+    int y;
+}; // <- again, this trailing semicolon is necessary!
 
+// this creates a variable called mypoint, which is an instance of
+// the struct point
+struct point mypoint;
+    \end{codeblock}
+
+    You can access elements of a struct using the \code{.} operator.
+    \begin{codeblock}
+mypoint.x = 3;
+printf("\%i\n", mypoint.y);
+    \end{codeblock}
+
+    You can access elements of a struct using the \code{.} operator.
+    \begin{codeblock}
+mypoint.x = 3;
+    \end{codeblock}
+    
+\end{frame}
+
+\begin{frame}[fragile]{Shorthand Struct initialization}
+    There exists a shorthand notation for creating instances of structs:
+    \begin{codeblock}
+        struct point{
+            int x;
+            int y;
+        }; 
+        
+        //this specifies the names explicitly
+        struct point myotherpoint = {x: 3, y: 5};
+
+        // this depends on the order of the struct members
+        struct point mypoint = {3, 5};
+    \end{codeblock}
+
+\end{frame}
+
+\begin{frame}[fragile]{Structs and Enums in Functions}
+    Structs and Enums can also be Function Parameters:
+    \begin{codeblock}
+void foo(enum day_of_week day, struct point p){ 
+    //...
+}
+struct point p = {1,2};
+//we can use enum values as literals, no need for a variable
+foo(TUESDAY, p); 
+
+// but this doesn't work, only use the struct shorthand
+// for the initialization of variables !
+foo(FRIDAY, {x: 1,y: 2}); //!!! compiler error
+    \end{codeblock}
+\end{frame}
+  
 \end{document}
