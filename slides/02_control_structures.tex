@@ -19,7 +19,7 @@
 
 %TODO: extract this into a module, i don't know how though, jakob please :)
 \newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[
-    language=C,
+    language=C++, %C++ gives us true and false
     showstringspaces=false,
     basicstyle=\ttfamily,
     columns=flexible,
@@ -31,7 +31,7 @@
     {
           \minipage{\textwidth} 
           \lstset{
-            language=C,
+            language=C++,
             backgroundcolor=\color{lightlightgray},
             showstringspaces=false,
             basicstyle=\ttfamily,
@@ -93,6 +93,31 @@ char b = 'A';    /* use single quotation marks */
     \end{codeblock}
 \end{frame}
 
+\section{Operators}
+\begin{frame}[fragile]{Basic Binary Operators}
+    \begin{itemize}
+        \item \code{+}, \code{-} just behave as expected 
+        \item \code{*} means multiply, \code{/} means divide
+        \item Operator precedence works mostly as expected.
+        \item You can use parenthesess around expressions: \code{(3 + 4) * 7}
+        \item \code{=} is the assignment operator.
+        \begin{itemize}
+            \item 
+                \code{x = 4;} means that future references to \code{x}
+                will evaluate to \code{4}
+            \item 
+                you cannot assign to arbitrary expressions:
+                \code{(x + 1) = 17} is not legal, since \code{(x + 1)} 
+                is not assignable. A compile time error occurs.
+        \end{itemize}
+        \item \code{==} is the comparison operator. 
+            \code{4 == 4} evaluates to \code{true}, 
+            \code{x * 0 == 1} evaluates to \code{false}
+        \item 
+            \code{\%} is the modulus operator. 
+            Examples: \code{7 \% 3 == 1}, \code{2 \% 2 == 0}
+    \end{itemize}
+\end{frame}
 
 \section{Control Structures}
 \begin{frame}[fragile]{if statements}
@@ -163,7 +188,7 @@ while(true){
     i++; 
     if(i % 7 == 0) continue; //skip all numbers divisible by 5
     printf("%i\n", i);
-    if(i == 20)break; //exit the loop once i is 30
+    if(i == 20)break; //exit the loop once i is 20
 }
     \end{codeblock} 
     \begin{itemize}
@@ -183,8 +208,6 @@ while(true){
 \subsection{do \ldots while}
 
 \subsection{for loop}
-
-\subsection{operators}
 
 \section{format strings}
 
