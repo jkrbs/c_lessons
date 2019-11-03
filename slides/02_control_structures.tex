@@ -178,7 +178,43 @@ while(true){
 
 \subsection{do \ldots while}
 
+\begin{frame}[fragile]{do...while}
+	The difference between \textit{do...while} and \textit{while} is the order of executing the statement(s) and checking the condition.\\
+	\bigskip
+	The \textit{while} loop begins with checking, while the \textit{do...while} loop begins with executing the statement(s).
+	\begin{codeblock}
+int i = 3;
+do {
+	- -i;
+} while (i < 1);
+\end{codeblock}
+	\bigskip
+	The Statement(s) in a \textit{do ... while} loop are executed at least once.
+\end{frame}
+
 \subsection{for loop}
+
+\begin{frame}[fragile]{for}
+	The For-Loop is comfortable for iterating. It takes three arguments.
+	\begin{itemize}
+		\item Initialization
+		\item Condition
+		\item Iteration statement
+	\end{itemize}
+	\bigskip
+	For illustration, consider a program printing the numbers 1 to 10:
+	\begin{codeblock}
+int i;
+for (i = 1; i <= 10; ++i)
+	{printf("%d\n", i);
+}
+\end{codeblock}
+	\begin{itemize}
+		\item \textit{i} is called an \textit{index} iterating from the given start to a given end value
+		\item \textit{i, j, k} are commonly used identifiers for the index
+	\end{itemize}
+\end{frame}
+
 
 \section{format strings}
 \begin{frame}{format strings}
