@@ -18,7 +18,8 @@
 \end{frame}
 
 
-\section{Source Code and Solutions}
+%\section{Source Code and Solutions}
+% NOTE(cmrs): what is this section supposed to contain?
 
 \section{Variables and Types}
 \begin{frame}{Integers}
@@ -86,6 +87,30 @@ char b = 'A';    /* use single quotation marks */
             \code{\%} is the modulus operator.
             Examples: \code{7 \% 3 == 1}, \code{2 \% 2 == 0}
     \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Type Conversions}
+    \begin{itemize}
+        \item 
+            Explicit type conversion can be performed using the casting syntax:
+            \begin{codeblock}
+int i = 5;
+float fi = (float)i;
+            \end{codeblock}
+        \item 
+            When mixing different types in an expression, C will convert the
+            types to match. The rules applying here are rather complicated,
+            please use explicit casts instead like this: 
+            \begin{codeblock}
+int i = 5;
+float res = (float)i * 3;
+            \end{codeblock}
+        \item 
+            Be especially wary of mixing \code{signed}
+            and \code{unsigned} integers!
+    \end{itemize}\ \\
+    \ \\
+
 \end{frame}
 
 \section{Control Structures}
