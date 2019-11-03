@@ -45,12 +45,11 @@
 float x = 0.125;             /* Precision: 7 to 8 digits */
 double y = 111111.111111;    /* Precision: 15 to 16 digits */
     \end{codeblock}
-
 \end{frame}
 \begin{frame}[fragile]{Characters}
     \begin{itemize}
         \item Keyword: \code{char}
-        \item Can be \code{signed}(default) or \code{unsigned}    
+        \item Can be \code{signed}(default) or \code{unsigned}
         \item Size: 1 Byte (8 Bit) on almost every architecture
         \item Intended to represent a single character
         \item Stores its \textit{ASCII} number (e.g. 'A' $\Rightarrow$ 65)
@@ -66,25 +65,25 @@ char b = 'A';    /* use single quotation marks */
 \section{Operators}
 \begin{frame}[fragile]{Basic Binary Operators}
     \begin{itemize}
-        \item \code{+}, \code{-} just behave as expected 
+        \item \code{+}, \code{-} just behave as expected
         \item \code{*} means multiply, \code{/} means divide
         \item Operator precedence works mostly as expected.
         \item You can use parenthesess around expressions: \code{(3 + 4) * 7}
         \item \code{=} is the assignment operator.
         \begin{itemize}
-            \item 
+            \item
                 \code{x = 4;} means that future references to \code{x}
                 will evaluate to \code{4}
-            \item 
+            \item
                 you cannot assign to arbitrary expressions:
-                \code{(x + 1) = 17} is not legal, since \code{(x + 1)} 
+                \code{(x + 1) = 17} is not legal, since \code{(x + 1)}
                 is not assignable. A compile time error occurs.
         \end{itemize}
-        \item \code{==} is the comparison operator. 
-            \code{4 == 4} evaluates to \code{true}, 
+        \item \code{==} is the comparison operator.
+            \code{4 == 4} evaluates to \code{true},
             \code{x * 0 == 1} evaluates to \code{false}
-        \item 
-            \code{\%} is the modulus operator. 
+        \item
+            \code{\%} is the modulus operator.
             Examples: \code{7 \% 3 == 1}, \code{2 \% 2 == 0}
     \end{itemize}
 \end{frame}
@@ -93,23 +92,23 @@ char b = 'A';    /* use single quotation marks */
 \begin{frame}[fragile]{if statements}
     \begin{itemize}
     \item basic usage:
-        \begin{codeblock} 
+        \begin{codeblock}
 if(3 > 2){  // arbitrary condition
     //this gets executed IF the condition evaluates to true
 }
         \end{codeblock}
     \item short form (use it only for short and simple things):
-        \begin{codeblock} 
+        \begin{codeblock}
 if(3 > 2) bar();
         \end{codeblock}
 
     \item else blocks:
-        \begin{codeblock} 
-if(foo()){ 
+        \begin{codeblock}
+if(foo()){
 }
-else if(bar()){ 
+else if(bar()){
 }
-else{ 
+else{
 }
         \end{codeblock}
 
@@ -132,9 +131,9 @@ switch(command_that_returns_a_status_code()){
     default: puts("this should never happen(TM)");
 }
     \end{codeblock}
-    Every case must be terminated by a \code{break;} statement, otherwise the 
+    Every case must be terminated by a \code{break;} statement, otherwise the
     following case(s) also get executed. If this is really your intention,
-    which happens very rarely, put a comment like \code{//fallthrough}, 
+    which happens very rarely, put a comment like \code{//fallthrough},
     since this is a common bug
 \end{frame}
 
@@ -155,23 +154,23 @@ while(i < 20){
     \begin{codeblock}
 int i = 0;
 while(true){
-    i++; 
+    i++;
     if(i % 7 == 0) continue; //skip all numbers divisible by 5
     printf("%i\n", i);
     if(i == 20)break; //exit the loop once i is 20
 }
-    \end{codeblock} 
+    \end{codeblock}
     \begin{itemize}
         \item
             \code{continue} skips the rest of the loop block and begins
             the next iteration
         \item \code{break} just jumps after the end of the loop block
-        \item 
+        \item
             Beware: if you have a \code{switch} inside a \code{while},
             \code{break} will just exit the \code{switch}!
-        \item 
+        \item
             In fact, \code{break} and \code{continue} will always be applied to
-            the innermost control structure that defines them. 
+            the innermost control structure that defines them.
     \end{itemize}
 \end{frame}
 
@@ -204,8 +203,8 @@ do {
 	For illustration, consider a program printing the numbers 1 to 10:
 	\begin{codeblock}
 int i;
-for (i = 1; i <= 10; ++i)
-	{printf("%d\n", i);
+for (i = 1; i <= 10; ++i){
+    printf("%d\n", i);
 }
 \end{codeblock}
 	\begin{itemize}
@@ -230,5 +229,33 @@ The format string determines how the value is interpreted.
 		\%f & floating point number & float, double \\\hline
 	\end{tabular}
 \end{frame}
-\section{functions}
+\section{Functions}
+\begin{frame}[fragile]{Functions}
+    \begin{itemize}
+        \item
+            a regular function has a return type, a name, parameters and a body
+            \begin{codeblock}
+int add(int a, int b){
+    printf("%i + %i = %i\n", a, b, a + b);
+    return a + b;
+}
+            \end{codeblock}
+        \item
+            a function can also return nothing,
+            the type of nothing is \code{void}.
+        \item
+            \code{void} functions should not contain \code{return} statements
+        \item
+            functions can call other functions (including themselves)
+            \begin{codeblock}
+int multiply(int a, int b){
+    if(a == 0) return 0;
+    if(a == 1) return y;
+    return add(b, multiply(--a, b));
+}
+            \end{codeblock}
+    \end{itemize}
+
+\end{frame}
+
 \end{document}
