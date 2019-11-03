@@ -143,7 +143,42 @@ switch(command_that_returns_a_status_code()){
     since this is a common bug
 \end{frame}
 
-\subsection{while}
+\begin{frame}[fragile]{basic while statements}
+    \begin{codeblock}
+int i = 0;
+while(i < 20){
+    printf("%i\n", i);
+    i++;
+}
+    \end{codeblock}
+
+    This loop prints the numbers from 0 to 19(inclusive).
+    Before each iteration (even before the first) the condition is checked.
+    Once the condition is no longer satisfied, it jumps after the loop block.
+\end{frame}
+\begin{frame}[fragile]{break and continue in while statements}
+    \begin{codeblock}
+int i = 0;
+while(true){
+    i++; 
+    if(i % 7 == 0) continue; //skip all numbers divisible by 5
+    printf("%i\n", i);
+    if(i == 20)break; //exit the loop once i is 30
+}
+    \end{codeblock} 
+    \begin{itemize}
+        \item
+            \code{continue} skips the rest of the loop block and begins
+            the next iteration
+        \item \code{break} just jumps after the end of the loop block
+        \item 
+            Beware: if you have a \code{switch} inside a \code{while},
+            \code{break} will just exit the \code{switch}!
+        \item 
+            In fact, \code{break} and \code{continue} will always be applied to
+            the innermost control structure that defines them. 
+    \end{itemize}
+\end{frame}
 
 \subsection{do \ldots while}
 
