@@ -85,6 +85,28 @@ char b = 'A';    /* use single quotation marks */
     \end{tabular}
 \end{frame}
 
+\section{printf and scanf}
+\begin{frame}[fragile]{printf and scanf}
+    We already know \code{printf} allows us to write out data to the console.
+
+    \code{scanf} does the opposite, and reads in user input from the console:
+    \begin{codeblock}
+puts("Please insert a number:");
+int number;
+scanf("%d", &number); //reads in a single number
+
+char c;
+//reads in a number and a char separated by whitespace
+scanf("%d %c", &number, &c);
+    \end{codeblock}
+
+    \code{scanf} actually returns an int. That is the number of successfully
+    read arguments.
+
+    The \code{&number} means "place the read result into the number variable".
+    Treat it as magic for now, we will explain it properly later.
+\end{frame}
+
 \section{Operators}
 \begin{frame}[fragile]{Basic Binary Operators}
     \begin{itemize}
