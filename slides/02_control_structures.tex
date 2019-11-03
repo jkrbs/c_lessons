@@ -240,19 +240,21 @@ for (int i = 1; i <= 10; ++i){
 
 \section{format strings}
 \begin{frame}{format strings}
-The format string determines how the value is interpreted.
-    To avoid compiler warnings, only use the following combinations: \\ \ \\
+    The format string determines how a value is interpreted in the \code{printf} 
+    function family. Here are some of the available options: \\ \ \\
     \begin{tabular}{|c|c|c|}
         \hline
         \textbf{type} & \textbf{description} & \textbf{type of argument} \\\hline
         \%c & single character & char, int (if $<=$ 255) \\\hline
-        \%d & decimal number & char, int \\\hline
+        \%d or \%i & decimal number & char, int \\\hline
         \%u & unsigned decimal number & unsigned char, unsigned int \\\hline
         \%X & hexadecimal number & char, int \\\hline
         \%ld & long decimal number & long \\\hline
         \%f & floating point number & float, double \\\hline
+        \%s & string & const char* [more on this later] \\\hline
     \end{tabular}
 \end{frame}
+
 \section{Functions}
 \begin{frame}[fragile]{Functions}
     \begin{itemize}
