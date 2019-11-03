@@ -3,6 +3,7 @@
 \usepackage{listings}
 \usepackage{csquotes}
 \usepackage{hyperref}
+\usepackage{xcolor}
 % theme
 \usetheme{metropolis}
 % packages
@@ -16,20 +17,31 @@
 	\tableofcontents
 \end{frame}
 
+\lstset{
+    showstringspaces=false,
+    basicstyle=\ttfamily,
+    keywordstyle=\color{blue},
+    commentstyle=\color[green]{0.6},
+    stringstyle=\color[RGB]{255,150,75}
+}
+\definecolor{lightlightgray}{RGB}{230,230,230}
+\newcommand{\code}[1]{\colorbox{lightlightgray}{\lstinline[language=C]$#1$}}
+
 \section{Source Code and Solutions}
 
 \section{Variables and Types}
-\begin{frame}{Inetegers}
+\begin{frame}{Integers}
 	\begin{itemize}
-		\item Keywords: \textit{int}, \textit{short}, \textit{long}
+        \item Keywords: \code{int}, \code{short}, \code{long}, \code{long long}
 		\item Stored as a binary number with fixed length
-		\item Can be \textit{signed}(default) or \textit{unsigned}
-		\item Actual size of \textit{int}, \textit{short}, \textit{long} depends on architecture
+        \item Can be \code{signed} or \code{unsigned} (undefined, but can be overridden using signed char and unsigned char)
+		\item Actual size of \code{int}, \code{short}, \code{long} depends on architecture
+        \item For definite sizes: include stddef.h which adds types like \code{size_t}, \code{int32t}, \code{uint64_t}
 	\end{itemize}
 \end{frame}
 \begin{frame}[fragile]{float}
 \begin{itemize}
-		\item Keywords: \textit{float}, \textit{double}, \textit{long double}
+		\item Keywords: \code{float}, \code{double}, \code{long double}
 		\item Stored as specified in \textit{IEEE 754 Standard} TL;DR
 		\item Special values for $\infty$, $-\infty$, NaN
 		\item Useful for fractions and very large numbers
@@ -44,14 +56,14 @@ double y = 111111.111111;	/* Precision: 15 to 16 digits */
 \end{frame}
 \begin{frame}[fragile]{Characters}
 	\begin{itemize}
-		\item Keyword: \textit{char}
-		\item Can be \textit{signed}(default) or \textit{unsigned}	
+		\item Keyword: \code{char}
+		\item Can be \code{signed}(default) or \code{unsigned}	
 		\item Size: 1 Byte (8 Bit) on almost every architecture
 		\item Intended to represent a single character
 		\item Stores its \textit{ASCII} number (e.g. 'A' $\Rightarrow$ 65)
 	\end{itemize}\ \\
 	\ \\
-	You can define a \textit{char} either by its ASCII number or by its symbol:
+	You can define a \code{char} either by its ASCII number or by its symbol:
 	\begin{lstlisting}[numbers=none]
 char a = 65;
 char b = 'A';	/* use single quotation marks */
