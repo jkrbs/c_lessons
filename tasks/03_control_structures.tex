@@ -44,7 +44,7 @@ do{
 \begin{codeblock}
 for(int i = 0;i<100;i++){
     switch(i % 3 + 2 * (i % 5)){
-        case 0: printf("%i\n"); break;
+        case 0: printf("%i\n", i); break;
         case 1: puts("Fizz!"); break;
         case 2: puts("Buzz!"); break;
         case 3: puts("FizzBuzz!"); break;
