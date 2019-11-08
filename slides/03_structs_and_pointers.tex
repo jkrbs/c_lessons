@@ -99,16 +99,16 @@ mypoint.x = 3;
 \begin{frame}[fragile]{Shorthand Struct initialization}
     There exists a shorthand notation for creating instances of structs:
     \begin{codeblock}
-        struct point{
-            int x;
-            int y;
-        }; 
-        
-        //this specifies the names explicitly
-        struct point myotherpoint = {x: 3, y: 5};
+struct point{
+    int x;
+    int y;
+}; 
 
-        // this depends on the order of the struct members
-        struct point mypoint = {3, 5};
+//this specifies the names explicitly
+struct point myotherpoint = {x: 3, y: 5};
+
+// this depends on the order of the struct members
+struct point mypoint = {3, 5};
     \end{codeblock}
 
 \end{frame}
@@ -128,5 +128,36 @@ foo(TUESDAY, p);
 foo(FRIDAY, {x: 1,y: 2}); //!!! compiler error
     \end{codeblock}
 \end{frame}
-  
+
+//TODO(krbs): basic pointers
+
+\begin{frame}[fragile]{Arrays}
+    Structs are nice, but at the end of the day, why not just use multiple variables?
+\end{frame}
+
+\begin{frame}[fragile]{Nested Structs}
+   \begin{itemize}
+       \item Structs can be forward declared like functions: \code{struct foo;}
+       \item But instances can't be declared or used before they are defined.
+       \item 
+            What works is declaring pointers to the forward declared struct.
+            Since pointers have a constant size, the compiler doesn't need to
+            know about the struct.
+   \end{itemize}
+
+    \begin{codeblock}
+struct b;
+struct a{
+    //struct b bar; //! compiler error
+    struct b* b_ptr; //works
+};
+struct b{
+    struct a foo; //works, since a is defined
+}
+    \end{codeblock}
+
+    These rules have the side effect of preventing an interesting case:
+    What would be the size of \code{struct a} if line 3 was legal?
+\end{frame}
+
 \end{document}
