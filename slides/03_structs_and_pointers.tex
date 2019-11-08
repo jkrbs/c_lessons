@@ -27,6 +27,76 @@
     \end{itemize}
 \end{frame}
 
+\section{Appendix to last time}
+
+\begin{frame}[fragile]{Variable in switch statements}
+    \begin{codeblock}
+switch(1){
+    case 1: 
+        int x = 3;
+        printf("%d\n", x);
+}
+    \end{codeblock}
+
+    (Compiler) \textbf{error}: a label can only be part of a statement and a 
+       declaration is not a statement
+   
+    Solution:
+    \begin{codeblock}
+switch(1){
+    case 1:{ 
+        int x = 3;
+        printf("%d\n", x);
+    } break;
+}
+    \end{codeblock}
+
+\end{frame}
+
+\begin{frame}[fragile]{assert}
+
+\code{assert} is a function from the c standard library that is extremely useful 
+for debugging:
+
+\begin{codeblock}
+#include<assert.h> 
+void main(){ 
+    assert(3 == 3); // ok
+    assert(3 == 4); // RUNTIME error when in DEBUG mode
+}
+\end{codeblock}
+
+When in debug mode, assert will produce a \textbf{runtime} error if the
+expression does not evaluate to \code{true}. An assertion fail can be
+nicely caught by a debugger like gdb or an IDE.
+
+Large C codebases oftentimes contain hundreds of asserts at critical points
+to ensure that the programmers assumptions about the state of the programmers
+at the point of execution are correct. 
+
+When producing an optimized release binary, asserts are taken out
+by the compiler. 
+
+\end{frame} 
+
+\begin{frame}[fragile]{bool}
+    We have been using \code{true} and \code{false} for quite some time now.
+    There is a type that actually tries to encode just these two values: 
+    \begin{codeblock}
+#include <stdbool.h> //not a native type
+
+//BUT (no warnings!): 
+bool b = true;
+b = 27; 
+int x = false;
+    \end{codeblock}
+
+    Since the smalles addressable unit is a byte, a \code{bool} still uses one
+    byte, despite fitting in one bit. It documents the programmers intention 
+    nicely though. In C, \code{true} really means 1 (or in conditions: \textbf{not 0})
+    and \code{false} means 0.
+\end{frame} 
+
 \section{Complex Data Types}
 
 \begin{frame}[fragile]{Enumerations}
@@ -109,6 +179,10 @@ struct point myotherpoint = {x: 3, y: 5};
 
 // this depends on the order of the struct members
 struct point mypoint = {3, 5};
+
+// !! but this doesn't work, the shorthand syntax
+// is only available during declaration!
+// mypoint = {3, 4};
     \end{codeblock}
 
 \end{frame}
@@ -120,19 +194,121 @@ void foo(enum day_of_week day, struct point p){
     //...
 }
 struct point p = {1,2};
-//we can use enum values as literals, no need for a variable
-foo(TUESDAY, p); 
 
-// but this doesn't work, only use the struct shorthand
-// for the initialization of variables !
-foo(FRIDAY, {x: 1,y: 2}); //!!! compiler error
+//we can use enum values as literals, no need for a variable
+foo(TUESDAY, p);
+
+// !! again, this doesn't work
+// foo(TUESDAY, {1,2});
+
     \end{codeblock}
 \end{frame}
 
 //TODO(krbs): basic pointers
 
 \begin{frame}[fragile]{Arrays}
-    Structs are nice, but at the end of the day, why not just use multiple variables?
+    Arrays are a contiguous block of memory 
+    filled with instances of the array type.
+    We actually have been using them already but didn't even notice:
+    we call \code{"foo"} a string, but it's really just an array of chars:
+    \begin{codeblock}
+char foo[3] = {'f', 'o', 'o'};
+    \end{codeblock} 
+
+    The code above creates an array called bar of three ints.
+    Like with structs, the initialization syntax is not available for
+    assignment. 
+    
+    We can also have the compiler figure out the size during initialization:
+    \begin{codeblock}
+int bar[] = {1, 2, 3};
+    \end{codeblock} 
+
+    This is semantically equivalent to writing 3 in the array brackets.
+
+    The combined size of bar is \code{3 * sizeof(int)}.
+    Assuming \code{int} is 4 bytes large, $\code{sizeof(bar)} = 3 * 4 = 12$ [Bytes].
+   
+\end{frame}
+
+\begin{frame}[fragile]{Accessing Array Elements}
+    You can access array elements like this: 
+    \begin{codeblock}
+int bar[3] = {0, 1, 2};
+bar[0] = 12; // ! the indexing is zero based
+printf("%d\n", bar[1]); 
+    \end{codeblock}
+
+    We can iterate over arrays like this: 
+    \begin{codeblock}
+//we don't have to initialize our arrays
+int bar[5];
+for(int i = 0; i < sizeof(bar) / sizeof(int); i++){
+    bar[i] = 2 * i;
+    printf("%d\n", bar[i]);
+}    
+    \end{codeblock}
+  
+
+    Like with structs, we can use named initialization: 
+    \begin{codeblock}
+int bar[] = {[9] = 4, [1] = 7, [2] = 1};
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Arrays decaying to pointers}
+    What if we want to pass an array to a function?
+    \begin{codeblock}
+void foo(int arr[3]); // ?!!
+    \end{codeblock}
+
+    Bad idea. It compiles, but what the compiler REALLY sees is this:
+    \begin{codeblock}
+void foo(int* arr);
+    \end{codeblock} 
+
+    Really:
+    \begin{codeblock}
+void foo(int arr[3]){
+    arr[12] = 27;
+    assert(sizeof(arr) == sizeof(int*));
+}
+    \end{codeblock} 
+
+
+    \textbf{No warning whatsoever}.
+
+    Why does it do this? Because C is an old language.
+
+    Does this make any sense at all? Kind of. 
+    An array is really just a region in memory. And a pointer just 
+    \textbf{points} to a region of memory.
+    
+    What C does here is basically assume you wanted a \textbf{Reference} to 
+    the array, not a \textbf{Copy} of the array. What if you wanted a copy?
+    Wrap the array in a struct and pass that.   
+  
+\end{frame}
+
+\begin{frame}[fragile]{Arrays decaying to pointers}
+    But since C thinks of arrays as pointers, it allows us to do this:
+    \begin{codeblock}
+void foo(int* arr){
+    arr[27] = 12; // !!
+}
+    \end{codeblock} 
+
+    This is all fine if you passed an array with at least \textbf{28}
+    elements, but what if it was smaller? Well let's check then:
+\begin{codeblock}
+// remember, this just means int* arr,
+// no matter if we the size specified
+void foo(int arr[3]){ 
+   size_t array_size = sizeof(arr); // !!!
+   arr[5]
+}
+\end{codeblock} 
+
 \end{frame}
 
 \begin{frame}[fragile]{Nested Structs}
