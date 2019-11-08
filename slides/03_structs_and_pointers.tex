@@ -71,7 +71,7 @@ expression does not evaluate to \code{true}. An assertion fail can be
 nicely caught by a debugger like gdb or an IDE.
 
 Large C codebases oftentimes contain hundreds of asserts at critical points
-to ensure that the programmers assumptions about the state of the programmers
+to ensure that the programmers assumptions about the state of the programm
 at the point of execution are correct. 
 
 When producing an optimized release binary, asserts are taken out
@@ -243,7 +243,7 @@ printf("%d\n", bar[1]);
     \begin{codeblock}
 //we don't have to initialize our arrays
 int bar[5];
-for(int i = 0; i < sizeof(bar) / sizeof(int); i++){
+for(int i = 0; i < sizeof(bar) / sizeof(bar[0]); i++){
     bar[i] = 2 * i;
     printf("%d\n", bar[i]);
 }    
@@ -262,35 +262,35 @@ int bar[] = {[9] = 4, [1] = 7, [2] = 1};
 void foo(int arr[3]); // ?!!
     \end{codeblock}
 
-    Bad idea. It compiles, but what the compiler REALLY sees is this:
+    Bad idea. It compiles, but what the compiler \textbf{really} sees is this:
     \begin{codeblock}
 void foo(int* arr);
     \end{codeblock} 
 
-    Really:
+    \textbf{Really:}
     \begin{codeblock}
 void foo(int arr[3]){
-    arr[12] = 27;
-    assert(sizeof(arr) == sizeof(int*));
+    arr[12] = 27; // this is "fine", no warnings!
+    assert(sizeof(arr) == sizeof(int*)); // true !!!!!11eleven
 }
     \end{codeblock} 
 
-
-    \textbf{No warning whatsoever}.
-
     Why does it do this? Because C is an old language.
-
     Does this make any sense at all? Kind of. 
-    An array is really just a region in memory. And a pointer just 
+    An array is really just a region in memory. And a pointer 
     \textbf{points} to a region of memory.
-    
-    What C does here is basically assume you wanted a \textbf{Reference} to 
-    the array, not a \textbf{Copy} of the array. What if you wanted a copy?
-    Wrap the array in a struct and pass that.   
-  
+ 
 \end{frame}
 
-\begin{frame}[fragile]{Arrays decaying to pointers}
+\begin{frame}[fragile]{Arrays decaying to pointers 2}
+   
+    
+    What C does here is basically assume you wanted a \textbf{Reference} to 
+    the array,  \textbf{not a Copy} of the array. The same conversion happens
+    when you assign an array to a pointer. An array itself is simply not
+    assignable. What if you wanted a copy? 
+    Wrap the array in a struct and pass that. 
+
     But since C thinks of arrays as pointers, it allows us to do this:
     \begin{codeblock}
 void foo(int* arr){
@@ -299,16 +299,91 @@ void foo(int* arr){
     \end{codeblock} 
 
     This is all fine if you passed an array with at least \textbf{28}
-    elements, but what if it was smaller? Well let's check then:
+    elements, but what if it was smaller? Well let's always check then:
 \begin{codeblock}
-// remember, this just means int* arr,
-// no matter if we the size specified
-void foo(int arr[3]){ 
-   size_t array_size = sizeof(arr); // !!!
-   arr[5]
+void foo(int arr[]){ 
+   for(int x = 0; i< sizeof(arr) / sizeof(arr[0]); i++){
+       printf("%d\n", x); // !! potential segfault
+   }
 }
 \end{codeblock} 
+\end{frame}
 
+\begin{frame}[fragile]{Living with Arrays decaying to pointers}
+What happens in reality is quite simple:
+\begin{codeblock} 
+#include <stddef.h> //for size_t
+
+void foo(int* arr, size_t arr_len){ 
+    //iterate until we reach arr_len...
+}
+
+void main(){
+    int arr[] = {1,2,3};
+    size_t arr_len = sizeof(arr) / sizeof(arr[0]); //do this immetiately!
+    foo(arr, arr_len);
+}
+\end{codeblock} 
+\end{frame}
+
+\begin{frame}[fragile]{Living with Arrays decaying to pointers 2}
+    Alternatively:
+    \begin{codeblock} 
+void foo(int* arr_start, int* arr_end){ 
+    for(int* ip = arr_start; ip != arr_end; ip++){
+        *ip = 12;
+    }
+}
+
+void main(){
+    int arr[] = {1,2,3};
+    int* arr_end = arr + (sizeof(arr) / sizeof(arr[0]));
+    foo(arr, arr_end);
+}
+    \end{codeblock} 
+
+\end{frame}
+
+\begin{frame}[fragile]{Pointer arithmetic}
+    Noticed how we 'added' to an array on the last slide?
+    That's because the array decayed to a pointer again 
+    (like it always does when you do anything with it).
+    But how can we add to pointers?
+    \begin{codeblock} 
+char x = 'x';
+char* xp = &x; //0x7fffd164611c
+char* xpp = x + 1;  //0x7fffd164611c + 1 = 0x7fffd164611d
+    \end{codeblock} 
+
+    \textbf{But:} 
+    \begin{codeblock} 
+int x = 1;
+int* xp = &x; //0x7fffd164611c
+char* xpp = x + 1;  //0x7fffd164611c + 4  !!!
+    \end{codeblock}
+
+    Here arrays being pointers comes up agin. 
+    Adding \code{x} to a \code{type*} really means adding \code{x * sizeof(type)}.
+\end{frame}
+
+\begin{frame}[fragile]{Pointer subtraction}
+    You can also subtract two pointers. 
+    \code{type* - type*} really means \code{(type* - type*) / sizeof(type)}.
+    Because of this, we can use pointer subtraction to get the size of an array:
+    \begin{codeblock} 
+void foo(int* arr_start, int* arr_end){ 
+   int arr_len = arr_end  - arr_start; //number of elements
+}
+        
+void main(){
+    int arr[] = {1,2,3};
+    // !notice: arr_end points AFTER the last element
+    // NEVER DEREFERENCE arr_end
+    int* arr_end = arr + (sizeof(arr) / sizeof(arr[0]));
+    foo(arr, arr_end);
+}
+    \end{codeblock} 
+        
 \end{frame}
 
 \begin{frame}[fragile]{Nested Structs}
@@ -329,11 +404,11 @@ struct a{
 };
 struct b{
     struct a foo; //works, since a is defined
-}
+};
     \end{codeblock}
 
     These rules have the side effect of preventing an interesting case:
-    What would be the size of \code{struct a} if line 3 was legal?
+    What would be the \code{sizeof(struct a)} if line 3 was legal?
 \end{frame}
 
 \end{document}
