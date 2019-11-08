@@ -14,11 +14,13 @@
 \definecolor{lightlightgray}{RGB}{230,230,230}
 \lstnewenvironment{codeblock}
     {
-          \minipage{\textwidth} 
-          \lstset{
+        \minipage{\textwidth}   
+        \lstset{
             language=C++,
             backgroundcolor=\color{lightlightgray},
             showstringspaces=false,
+            breaklines=true,
+            breakatwhitespace=false,
             basicstyle=\ttfamily,
             columns=fixed,
             keywordstyle=\color{blue},
@@ -26,10 +28,13 @@
             breaklines=false,
             captionpos=b,
             extendedchars=true,
-          }
+            numbers=left,
+            numberstyle=\small\color{gray},
+        }
+        \lstset{}
+         \csname\@lst @SetFirstNumber\endcsname
     }
     {
+        \csname\@lst @SaveFirstNumber\endcsname
         \endminipage
     }
-
-
