@@ -85,10 +85,13 @@ by the compiler.
     \begin{codeblock}
 #include <stdbool.h> //not a native type
 
-//BUT (no warnings!): 
-bool b = true;
-b = 27; 
-int x = false;
+void main(){
+    bool b = true;
+    
+    //BUT (no warnings!): 
+    b = 27; 
+    int x = false;
+}
     \end{codeblock}
 
     Since the smalles addressable unit is a byte, a \code{bool} still uses one
@@ -106,9 +109,6 @@ int x = false;
     that alias certain integer values as constants.
     \begin{codeblock}
 enum day_of_week{
-    // if not specified, enum values are just the previous
-    // value plus one, beginning at 0
-    // we can override values if we want  
     MONDAY = 1,  
     TUESDAY, WEDNESDAY, THURSDAY,
     FRIDAY, SATURDAY, SUNDAY
@@ -118,6 +118,10 @@ enum day_of_week{
 // be any of the enum elements whe defined above
 enum day_of_week myday = TUESDAY; 
     \end{codeblock}
+
+    If not specified, enum values are just \textbf{the previous value plus one},
+    beginning at 0. We can override values if we want, but be careful with the
+    continuation afterwards.
 \end{frame}
 
 \begin{frame}[fragile]{Enumerations in Switch Statements}
@@ -204,7 +208,33 @@ foo(TUESDAY, p);
     \end{codeblock}
 \end{frame}
 
-//TODO(krbs): basic pointers
+% TODO(krbs): basic pointers and pointers to structs
+
+% Nested structs must be after pointers since it requires them
+\begin{frame}[fragile]{Nested Structs}
+    \begin{itemize}
+        \item Structs can be forward declared like functions: \code{struct foo;}
+        \item But instances can't be declared or used before they are defined.
+        \item 
+             What works is declaring pointers to the forward declared struct.
+             Since pointers have a constant size, the compiler doesn't need to
+             know about the struct.
+    \end{itemize}
+ 
+     \begin{codeblock}
+ struct b;
+ struct a{
+     //struct b bar; //! compiler error
+     struct b* b_ptr; //works
+ };
+ struct b{
+     struct a foo; //works, since a is defined
+ };
+     \end{codeblock}
+ 
+     These rules have the side effect of preventing an interesting case:
+     What would be the \code{sizeof(struct a)} if line 3 was legal?
+ \end{frame}
 
 \begin{frame}[fragile]{Arrays}
     Arrays are a contiguous block of memory 
@@ -212,12 +242,12 @@ foo(TUESDAY, p);
     We actually have been using them already but didn't even notice:
     we call \code{"foo"} a string, but it's really just an array of chars:
     \begin{codeblock}
-char foo[3] = {'f', 'o', 'o'};
+char foo[3] = {'f', 'o', 'o'}; 
     \end{codeblock} 
 
-    The code above creates an array called bar of three ints.
+    The code above creates an array called foo of three chars.
     Like with structs, the initialization syntax is not available for
-    assignment. 
+    assignment. (For the string case, this is a slight simplification).
     
     We can also have the compiler figure out the size during initialization:
     \begin{codeblock}
@@ -294,7 +324,7 @@ void foo(int arr[3]){
     But since C thinks of arrays as pointers, it allows us to do this:
     \begin{codeblock}
 void foo(int* arr){
-    arr[27] = 12; // !!
+    arr[27] = 12;
 }
     \end{codeblock} 
 
@@ -320,7 +350,8 @@ void foo(int* arr, size_t arr_len){
 
 void main(){
     int arr[] = {1,2,3};
-    size_t arr_len = sizeof(arr) / sizeof(arr[0]); //do this immetiately!
+    //just always store the length of the array
+    size_t arr_len = sizeof(arr) / sizeof(arr[0]); 
     foo(arr, arr_len);
 }
 \end{codeblock} 
@@ -369,7 +400,9 @@ char* xpp = x + 1;  //0x7fffd164611c + 4  !!!
 \begin{frame}[fragile]{Pointer subtraction}
     You can also subtract two pointers. 
     \code{type* - type*} really means \code{(type* - type*) / sizeof(type)}.
-    Because of this, we can use pointer subtraction to get the size of an array:
+    Because of this, we can use pointer subtraction 
+    to get the number of elements in an array 
+    (often called length, differentiating from size):
     \begin{codeblock} 
 void foo(int* arr_start, int* arr_end){ 
    int arr_len = arr_end  - arr_start; //number of elements
@@ -386,29 +419,6 @@ void main(){
         
 \end{frame}
 
-\begin{frame}[fragile]{Nested Structs}
-   \begin{itemize}
-       \item Structs can be forward declared like functions: \code{struct foo;}
-       \item But instances can't be declared or used before they are defined.
-       \item 
-            What works is declaring pointers to the forward declared struct.
-            Since pointers have a constant size, the compiler doesn't need to
-            know about the struct.
-   \end{itemize}
-
-    \begin{codeblock}
-struct b;
-struct a{
-    //struct b bar; //! compiler error
-    struct b* b_ptr; //works
-};
-struct b{
-    struct a foo; //works, since a is defined
-};
-    \end{codeblock}
-
-    These rules have the side effect of preventing an interesting case:
-    What would be the \code{sizeof(struct a)} if line 3 was legal?
-\end{frame}
+% TODO(krbs): malloc
 
 \end{document}
