@@ -1,5 +1,8 @@
+# vscode
+/.vscode
+
+# latex ...
 *.log
-.vscode/**
 *.nav
 *.toc
 *.vrb
@@ -12,3 +15,7 @@
 *.fdb_latexmk
 *.bbl
 *.blg
+
+# for cmrs's sanity
+test.c  
+a.out
