@@ -12,7 +12,7 @@
     commentstyle=\color{gray},
 ]$#1$}}
 \definecolor{lightlightgray}{RGB}{230,230,230}
-\lstnewenvironment{codeblock}
+\lstnewenvironment{codeblock}[1][]
     {
         \minipage{\textwidth}   
         \lstset{
@@ -30,6 +30,7 @@
             extendedchars=true,
             numbers=left,
             numberstyle=\small\color{gray},
+            #1
         }
         \lstset{}
          \csname\@lst @SetFirstNumber\endcsname
