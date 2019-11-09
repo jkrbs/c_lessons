@@ -19,10 +19,13 @@ int main(void)
 {
     int x;
     int e;
+    puts("Please enter an integer:");
     for (;;) {
         e = scanf("%d", &x);
         clear_line();
         if (e == 1) break;
+        puts("We could not parse your input. Please enter an integer:");
     }
+    printf("Thanks! Your integer was: %d\n", x);
     return 0;
 }
