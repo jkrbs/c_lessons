@@ -20,7 +20,7 @@ int main(void)
         int e = scanf("%f %c %f", &lhs, &op, &rhs);
         clear_line();
         if (e != 3) {
-            puts("Failed to parse your input.");
+            printf("Failed to parse your input. ");
             continue;
         }
         switch (op) {
@@ -36,7 +36,7 @@ int main(void)
             case '/':
                 printf("%.5g / %.5g = %.5g\n", lhs, rhs, lhs / rhs);
                 return 0;
-            default: printf("Unknown operator '%c'", op); break;
+            default: printf("Unknown operator '%c' ", op); break;
         }
     }
     return 0;
