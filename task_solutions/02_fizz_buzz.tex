@@ -1,0 +1,25 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 2: Fizz Buzz}
+\begin{codeblock}
+#include <stdio.h>
+int main(void){
+    int i = 1;
+    while (i < 100) {
+        if (i % 3 == 0 || i % 5 == 0) {
+            if (i % 3 == 0) printf("Fizz");
+            if (i % 5 == 0) printf("Buzz");
+            puts("!");
+        }
+        else {
+            printf("%i\n", i);
+        }
+        i++;
+    }
+    return 0;
+}
+\end{codeblock}
+\end{frame}
+\end{document}

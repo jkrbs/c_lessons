@@ -1,0 +1,68 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 3: Control Structures; 3.1a For}
+    \begin{codeblock}
+int i = 0; 
+while (i < 10) {
+    puts("Hello");
+    i++;
+}
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Task 3: Control Structures; 3.1b for}
+    \begin{codeblock}
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+puts("Hello");
+    \end{codeblock}
+
+    or just 
+    \begin{codeblock}
+puts(
+    "Hello\nHello\nHello\nHello\nHello\n"
+    "Hello\nHello\nHello\nHello\nHello"
+);
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Task 3: Control Structures; 3.2 Do While}
+    \begin{codeblock}
+int x = 0;
+while(x < 9){
+    i++;
+    printf("%i\n", i);
+    i++; 
+}
+    \end{codeblock}
+
+A little trick question. We learned that there is no difference between
+while and do while after the first iteration passes.
+\end{frame}
+
+\begin{frame}[fragile]{Task 3: Control Structures; 3.3 Switch}
+    \begin{codeblock}
+int x = i;
+while(x < 100){
+    int fbstate = i % 3 + 2 * (i % 5);
+    if (fbstate == 0) printf("%i\n", i);
+    else if (fbstate == 1) puts("Fizz!");
+    else if(fbstate == 2) puts("Buzz!");
+    else if(fbstate == 3) puts("FizzBuzz!"); 
+    i++; 
+}
+    \end{codeblock}
+
+    We could just use else on the last branch, 
+    but the task doesn't use default either. (Good code would, though).
+\end{frame}
+\end{document}
