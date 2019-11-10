@@ -72,6 +72,7 @@ void draw(gamestate *gamestate) {
         gamestate->enemy[e].symbol;
   }
 
+  puts("Cancertales 0.1. Move With WASD, exit with Q");
   for (int y = 0; y < MAP_HEIGHT; y++) {
     for (int x = 0; x < MAP_WIDTH; x++) {
       putchar(gamestate->env[x][y]);
@@ -97,45 +98,48 @@ void initGame(gamestate *gamestate) {
     }
   }
   for (int y = 0; y < MAP_HEIGHT; y++) {
-    gamestate->env[0][y] = '#';
-    gamestate->env[MAP_WIDTH - 1][y] = '#';
+    gamestate->env[0][y] = WALL_SYMBOL;
+    gamestate->env[MAP_WIDTH - 1][y] = WALL_SYMBOL;
   }
   for (int x = 0; x < MAP_WIDTH; x++) {
-    gamestate->env[x][0] = '#';
-    gamestate->env[x][MAP_HEIGHT - 1] = '#';
+    gamestate->env[x][0] = WALL_SYMBOL;
+    gamestate->env[x][MAP_HEIGHT - 1] = WALL_SYMBOL;
   }
   gamestate->player.x_pos = MAP_WIDTH / 2;
   gamestate->player.y_pos = MAP_HEIGHT / 2;
   gamestate->player.symbol = DEFAULT_PLAYER_SYMBOL;
+  gamestate->enemycount = 0;
 }
 
 int main() {
-  gamestate gamestate;
-  initGame(&gamestate);
+    gamestate gamestate;
+    initGame(&gamestate);
 
-  while (1) {
-    draw(&gamestate);
-    switch (getch()) {
-    case 'w':
-      if (!collision(&gamestate, gamestate.player.x_pos,
-                     gamestate.player.y_pos - 1))
-        gamestate.player.y_pos -= 1;
-      break;
-    case 'a':
-      if (!collision(&gamestate, gamestate.player.x_pos - 1,
-                     gamestate.player.y_pos))
-        gamestate.player.x_pos -= 1;
-      break;
-    case 's':
-      if (!collision(&gamestate, gamestate.player.x_pos,
-                     gamestate.player.y_pos + 1))
-        gamestate.player.y_pos += 1;
-      break;
-    case 'd':
-      if (!collision(&gamestate, gamestate.player.x_pos + 1,
-                     gamestate.player.y_pos))
-        gamestate.player.x_pos += 1;
-      break;
+    while (1) {
+	draw(&gamestate);
+	switch (getch()) {
+	    case 'w':
+	      if (!collision(&gamestate, gamestate.player.x_pos,
+		     gamestate.player.y_pos - 1))
+	    gamestate.player.y_pos -= 1;
+	      break;
+	    case 'a':
+	      if (!collision(&gamestate, gamestate.player.x_pos - 1,
+		     gamestate.player.y_pos))
+	    gamestate.player.x_pos -= 1;
+	      break;
+	    case 's':
+	      if (!collision(&gamestate, gamestate.player.x_pos,
+		     gamestate.player.y_pos + 1))
+	    gamestate.player.y_pos += 1;
+	      break;
+	    case 'd':
+	      if (!collision(&gamestate, gamestate.player.x_pos + 1,
+		     gamestate.player.y_pos))
+		    gamestate.player.x_pos += 1;
+	      break;
+	    case 'q':
+		    return 0;
+	}
     }
-  }
 }
