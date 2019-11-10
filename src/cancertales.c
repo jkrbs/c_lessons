@@ -61,8 +61,10 @@ void panic(char* msg)
     exit(EXIT_FAILURE);
 }
 
-// get a single input char. You really don't need to understand this code,
-// it's some fairly low level operating system stuff
+// get a single input char reliably even for control character.
+// You really don't need to understand this code right now,
+// it's some fairly low level operating system stuff that probably
+// doesn't work or even compile for windows cmd. We tested on msys2 though :).
 char getch()
 {
     char buf = 0;
