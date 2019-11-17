@@ -344,4 +344,27 @@ int main(int argc, char** argv){
 }
     \end{codeblock}
 \end{frame}
+
+\begin{frame}[fragile]{memcpy, memmove and memset}
+    Like with strings, c also as a few useful functions for dealing with raw
+    arrays. Counterintuitively, these are also found in \code{<string.h>}.
+    \begin{itemize}
+        \item \code{void* memcpy (void* destination, void* source, size_t num);}
+    
+        Copys \code{num} bytes from source to destination.
+        
+        No Zero Termination. There is no error condition,
+        since the only way this can fail is causing a Segfault.
+        
+        Returns destination (usually ignored).
+    
+        \item \code{void* memmove (void* destination, void* source, size_t num);}
+    
+        Like memcopy, but can deal with overlapping source and destination.
+
+        \item  \code{void * memset (void* buffer, char value, size_t num);}
+        
+        Sets \code{num} bytes of \code{buffer} to \code{value}
+    \end{itemize}
+\end{frame}
 \end{document}
