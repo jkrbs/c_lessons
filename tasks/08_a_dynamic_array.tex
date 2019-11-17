@@ -1,0 +1,33 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 8: A Dynamic Array}
+    Complete the following piece of code to implement a dynamically growing
+    array of integers that can hold as many elements as one likes.
+    The following slides will describe in detail what each function is
+    supposed to do.
+    \begin{codeblock}
+#include <stdlib.h>
+#include <string.h>
+
+struct darray{
+    int* buffer;
+    size_t size;
+    size_t capacity;
+}darray;
+
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}
+    \code{darray_append}
+    \begin{codeblock}
+        // appends a new element to the array.
+        // if the array doesn't have space for the additional element,
+        // reallocates the array (hint: malloc, memcpy, free)
+        // returns 0 on success, 1 on error
+        int darray_append(darray* arr, int value);
+    \end{codeblock}
+\end{frame}
+\end{document}

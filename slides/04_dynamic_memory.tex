@@ -245,8 +245,10 @@ Pass any pointer to previously allocated memory to \textit{free()} and it gets r
     
 \end{frame}
 
-\begin{frame}[fragile]{string utility functions}
-    Here are some libc functions for handling strings. For a full list, see
+\begin{frame}[fragile]{string utility functions 1}
+    Here are some libc functions for handling strings. 
+    They all reside in the \code{<strings.h>} header file.
+    For a full list, see
     \url{http://www.cplusplus.com/reference/clibrary/}
     \begin{itemize}
         \item \code{size_t strlen(char * str);}
@@ -258,9 +260,14 @@ Pass any pointer to previously allocated memory to \textit{free()} and it gets r
         Compares the two strings. returns 0 when equal, otherwise 
         a value with the sign of of str1[n] - str2[n], where n is the index 
         of the first differing character 
-        
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{string utility functions 2}
+    Oftentimes one searches for a sequence in a string.
+    These functions can help.
+    \begin{itemize}
         \item \code{char * strchr(char * str, char c);}
-        
+            
         Returns a pointer to the first occurence of \code{c} in \code{str}.
         If none is found, returns \code{NULL}.
 
@@ -274,9 +281,7 @@ Pass any pointer to previously allocated memory to \textit{free()} and it gets r
         Returns the first index of any character out of \code{charset} 
         in \code{str}. If none is found, returns the index of str's zero byte.
     \end{itemize}
- 
 \end{frame}
-
 
 \begin{frame}[fragile]{fgets}
     \code{fgets} is a function from the C standard library that 
