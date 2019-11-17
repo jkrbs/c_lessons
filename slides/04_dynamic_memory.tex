@@ -1,0 +1,169 @@
+% document
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+% theme
+\usetikzlibrary{arrows}
+\tikzstyle{line}=[draw] % here
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{arrow/.style={-latex, shorten >=.5ex, shorten <=.5ex}}
+
+\usetheme{metropolis}
+% packages
+\title{Lesson 4}
+\author{Christian Schwarz, Jakob Krebs}
+\date{18.11.2019}
+\begin{document}
+\maketitle
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
+
+\section{Source Code and Solutions}
+\begin{frame}{Sources and Solutions}
+    \begin{itemize}
+        \item we publish all code written in this course at \url{https://github.com/jkrbs/c_lessons}
+        \item we will publish example solutions of the tasks on same site
+        \item send us questions or your solutions to c-lessons@deutschland.gmbh
+    \end{itemize}
+\end{frame}
+
+\section{dynamic memory}
+\begin{frame}[fragile]{A closer look at memory}
+	\begin{tikzpicture}[y=2cm, font=\footnotesize]
+		\node[above, font=\small] at (1.5,0) {Stack};
+		
+		\draw (0,0) -- (0,-2);
+		\draw (0,0) -- (3,0);
+		\draw (3,0) -- (3,-2);
+		\draw[line join=round, decoration={zigzag,segment length=4, amplitude=1}, decorate] (0,-2) -- (3,-2);
+		
+		\draw[->] (-.25,0) -- (-.25,-1.9);
+		
+		\draw[dashed] (0,-.25) -- (3,-.25);
+		\draw[dashed] (0,-.5) -- (3,-.5);
+		\draw[dashed] (0,-.75) -- (3,-.75);
+		\draw[dashed] (0,-1) -- (3,-1);
+		\draw[dashed] (0,-1.25) -- (3,-1.25);
+		\draw[dashed] (0,-1.5) -- (3,-1.5);
+		\draw[dashed] (0,-1.75) -- (3,-1.75);
+		
+		\node[below, font=\small] at (6.5,-2) {Heap};		
+		
+		\draw (5,0) -- (5,-2);
+		\draw[line join=round, decoration={zigzag,segment length=4, amplitude=1}, decorate] (5,0) -- (8,0);
+		\draw (8,0) -- (8,-2);
+		\draw (5,-2) -- (8,-2);
+		
+		\draw[<-] (8.25,-.1) -- (8.25,-2);
+		
+		\draw[dashed] (5,-.25) -- (8,-.25);
+		\draw[dashed] (5,-.5) -- (8,-.5);
+		\draw[dashed] (5,-.75) -- (8,-.75);
+		\draw[dashed] (5,-1) -- (8,-1);
+		\draw[dashed] (5,-1.25) -- (8,-1.25);
+		\draw[dashed] (5,-1.5) -- (8,-1.5);
+		\draw[dashed] (5,-1.75) -- (8,-1.75);
+		
+		\draw[thick, dashed, orange] (0,0) -- (3,0);
+		\draw[thick, dashed, orange] (0,0) -- (0,-.25);
+		\draw[thick, dashed, orange] (0,-.25) -- (3,-.25);
+		\draw[thick, dashed, orange] (3,0) -- (3,-.25);
+		\node[orange,below=.15em] at (1.5,0){int};
+
+		\draw[thick, dashed, orange] (0,-.25) -- (3,-.25);
+		\draw[thick, dashed, orange] (0,-.25) -- (0,-.5);
+		\draw[thick, dashed, orange] (0,-.5) -- (3,-.5);
+		\draw[thick, dashed, orange] (3,-.25) -- (3,-.5);
+		\node[orange,below=.15em] at (1.5,-.25){int};
+		
+		\begin{uncoverenv}<3->
+			\draw[thick, dashed, orange] (5,-1.75) -- (8,-1.75);
+			\draw[thick, dashed, orange] (5,-1.75) -- (5,-2);
+			\draw[thick, dashed, orange] (5,-2) -- (8,-2);
+			\draw[thick, dashed, orange] (8,-1.75) -- (8,-2);
+			\node[orange,below=.15em] at (6.5,-1.75){int};
+		\end{uncoverenv}
+		
+		\begin{uncoverenv}<4->
+			\draw[thick, dashed, teal] (0,-.5) -- (3,-.5);
+			\draw[thick, dashed, teal] (0,-.5) -- (0,-1);
+			\draw[thick, dashed, teal] (0,-1) -- (3,-1);
+			\draw[thick, dashed, teal] (3,-.5) -- (3,-1);
+			\node[teal,below=.15em] at (1.5,-.5){int*};
+			
+			\draw (3,-.75) edge[out=0,in=180,->,shorten >=.5ex, shorten <=.5ex] (5,-1.875);
+		\end{uncoverenv}
+		
+		\begin{uncoverenv}<5->
+			\draw[thick, dashed, purple] (5,-1.25) -- (8,-1.25);
+			\draw[thick, dashed, purple] (5,-1.25) -- (5,-1.75);
+			\draw[thick, dashed, purple] (5,-1.75) -- (8,-1.75);
+			\draw[thick, dashed, purple] (8,-1.25) -- (8,-1.75);
+			\node[purple, below=.15em] at (6.5,-1.25){long};
+			
+			\draw[thick, dashed, teal] (0,-1) -- (3,-1);
+			\draw[thick, dashed, teal] (0,-1) -- (0,-1.5);
+			\draw[thick, dashed, teal] (0,-1.5) -- (3,-1.5);
+			\draw[thick, dashed, teal] (3,-1) -- (3,-1.5);
+			\node[teal,below=.15em] at (1.5,-1){long*};
+			
+			\draw (3,-1.25) edge[out=0,in=180,->,shorten >=.5ex, shorten <=.5ex] (5,-1.5);
+		\end{uncoverenv}
+	\end{tikzpicture} \\
+	\only<1>{All local variables of functions are placed at the \textit{stack}. \\
+		It grows and shrinks as variables are declared and functions return.}
+	\only<2>{Dynamical memory is allocated on the \textit{heap}. \\
+		The example shows a function with two local \textit{int} variables.}
+	\begin{onlyenv}<3>
+		\begin{codeblock}[numbers=none]
+malloc(sizeof(int));
+\end{codeblock}
+	Reserves exactly the amount of memory an \textit{int} variable takes.
+	\end{onlyenv}
+	\begin{onlyenv}<4>
+		\begin{codeblock}[numbers=none]
+int *new_block = malloc(sizeof(int));
+\end{codeblock}
+	The adress of that memory block is stored in an \textit{int} pointer.
+	\end{onlyenv}
+	\only<5>{\textit{malloc()} just needs to know the size of the block it reserves. \\
+		Let us allocate a \textit{long} variable as well.}
+\end{frame}
+
+
+\begin{frame}[fragile]{\textit{malloc()} in detail}
+	The function declaration might be a little bit confusing:
+	\begin{codeblock}
+void *malloc(size_t size);
+    \end{codeblock}
+	\begin{itemize}
+		\item \textit{size} is the size of the reserved block in \textbf{bytes}. \\
+		If you want to use that block \textit{seriously}, pass the size of an actual type (e.g. \textit{sizeof(int)}).
+		\item A \textit{void} pointer is returned since \textit{malloc()} does not know how you want to use the reserved block. By assigning it to a regular pointer variable it is automatically converted to that type.
+	\end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Tidying up}
+	Unlike normally declared variables, dynamically allocated storage is not automatically released when the function returns.
+	\begin{codeblock}
+void foo(void) {
+	int *bar = malloc(sizeof *bar);
+}
+\end{codeblock}
+	
+With the pointer \textit{bar} being removed from the stack, we havo no reference on its allocated memory and those four bytes are blocked forever! \\
+	\ \\
+	\begin{codeblock}
+free(void *ptr);
+\end{codeblock}
+
+Pass any pointer to previously allocated memory to \textit{free()} and it gets realeased.
+\end{frame}
+
+
+\end{document}
