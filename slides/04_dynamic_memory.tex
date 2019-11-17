@@ -322,4 +322,26 @@ int main(int argc, char** argv){
 }
     \end{codeblock}
 \end{frame}
+
+\begin{frame}[fragile]{sscanf}
+    \code{int sscanf (char* str, char* format, ...);} Works exactly like
+    \code{scanf}, but scans \code{str} instead of \code{stdin}. 
+    Can be used together with fgets for sane user input:
+
+    \begin{codeblock}
+#include <stdio.h>
+int main(int argc, char** argv){
+    char buffer[32];
+    int res;
+    if(fgets(buffer, sizeof(buffer), stdin) != NULL){
+        if(sscanf(buffer, "%i", &res) == 1){
+            printf("we parsed %i!\n", res);
+            return 0;    
+        } 
+    }
+    puts("input error");
+    return 1;
+}
+    \end{codeblock}
+\end{frame}
 \end{document}
