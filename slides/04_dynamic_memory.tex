@@ -246,10 +246,8 @@ Pass any pointer to previously allocated memory to \textit{free()} and it gets r
 \end{frame}
 
 \begin{frame}[fragile]{string utility functions}
-    The C standard library contains some useful functions to work with strings.
-    For a full listing of the c library check
+    Here are some libc functions for handling strings. For a full list, see
     \url{http://www.cplusplus.com/reference/clibrary/}
-    Here are some of the most useful ones:
     \begin{itemize}
         \item \code{size_t strlen(char * str);}
     
@@ -270,17 +268,26 @@ Pass any pointer to previously allocated memory to \textit{free()} and it gets r
         
         Returns a pointer to the first occurence of \code{substr} in \code{str}.
         If none is found, returns \code{NULL}.
+
+        \item \code{size_t strcspn(char *str, char *charset);}
+        
+        Returns the first index of any character out of \code{charset} 
+        in \code{str}. If none is found, returns the index of str's zero byte.
     \end{itemize}
  
 \end{frame}
 
 
 \begin{frame}[fragile]{fgets}
-    \code{fgets} is a function from the c standard library that is 
+    \code{fgets} is a function from the C standard library that 
     allows us to read in a string. It reads characters into a buffer
-    until it reaches a newline or the buffer is full. It always leaves space
-    and puts in a trailing zero byte afterwards.
-    The function signature is the following:
+    until it's after a newline or the buffer is full. 
+    
+    
+    On success, \code{fgets} always leaves space
+    and puts in a trailing zero byte afterwards. 
+    The function signature as follows:
+
     \begin{codeblock}[numbers=none]
 char* fgets(char *str, int count, FILE *stream );
     \end{codeblock}
@@ -293,7 +300,8 @@ char* fgets(char *str, int count, FILE *stream );
         \item \code{stream} wants the byte stream to read from. In our case, this
             will be \code{stdin}, which is then input stream from the terminal,
             but it could also be a handle for a file stored on disk 
-        \item on success, fgets returns \code{str}, on error it returns \code{NULL}
+        \item On success, fgets returns \code{str}, on error it returns \code{NULL}
+              A full buffer is still a success, error means the stream closed etc.
     \end{itemize}
 \end{frame}
 
@@ -302,13 +310,11 @@ char* fgets(char *str, int count, FILE *stream );
 #include <stdio.h>
 int main(int argc, char** argv){
     char buffer[32];
-    char* tail = &buffer[sizeof(buffer) - 2];
-    *tail = '\n';
     if(fgets(buffer, sizeof(buffer), stdin) != NULL){
-        printf("We received: %s", buffer);
-        // In case of overflow there wouldn't be a newline.
-        // We can check for overflow like this:
-        if(*tail != '\n' && *tail != '\0') puts("");
+        // For consistency, we remove 
+        // the potential trailing newline
+        buffer[strcspn(buffer, "\n")] = 0;
+        printf("We received: '%s'\n", buffer);
     }
     else{
         puts("input error");
