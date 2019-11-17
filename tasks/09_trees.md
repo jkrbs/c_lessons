@@ -5,7 +5,7 @@ Each node is give a number.
 The program prints the sum of all those numbers.
 
 ## Bonus 1
-Write function which prints a beautful on the commandline
+Write function which prints a beautful tree on the commandline
 
 ## Bonus 2
 
