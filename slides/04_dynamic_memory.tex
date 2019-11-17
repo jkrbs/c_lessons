@@ -165,5 +165,155 @@ free(void *ptr);
 Pass any pointer to previously allocated memory to \textit{free()} and it gets realeased.
 \end{frame}
 
+\section{Slightly Better User Input}
 
+\begin{frame}[fragile]{The length of Strings}
+    Last time we learned that we always need to pass the size of an array
+    together with the pointer to it. So if strings are just \code{char} arrays,
+    why do \code{puts} etc not require a size? 
+  
+    \begin{tikzpicture}[font=\scriptsize,x=2.5cm]
+            
+        \draw (0,1) -- (3,1);
+        \draw (0,1) -- (0,1.3);
+        \draw (0,1.3) -- (3,1.3);
+        \draw (3,1) -- (3,1.3);
+
+        \node[above=.6em] at (0,1) {\#0};
+        \node[above=.6em] at (.5,1) {\#4};
+        \draw[dashed] (1,1) -- (1,1.3);
+        \node[above=.6em] at (1,1) {\#8};
+        %\draw[dashed] (1.5,1) -- (1.5,1.3);
+        \node[above=.6em] at (1.5,1) {\#12};
+        \draw[dashed] (2.000,1) -- (2.000,1.3);
+        \draw[dashed] (2.125,1) -- (2.125,1.3);
+        \draw[dashed] (2.250,1) -- (2.250,1.3);
+        \draw[dashed] (2.375,1) -- (2.375,1.3);
+        \draw[dashed] (2.500,1) -- (2.500,1.3); 
+        \draw[dashed] (2.625,1) -- (2.625,1.3);
+        \draw[dashed] (2.750,1) -- (2.750,1.3);
+        \draw[dashed] (2.875,1) -- (2.875,1.3); 
+        \draw[dashed] (3.000,1) -- (3.000,1.3); 
+
+        \node[blue, below=.4em, right=0em] at (1.980,1.3) {H};
+        \node[blue, below=.4em, right=0em] at (2.125,1.3) {e};
+        \node[blue, below=.4em, right=0em] at (2.250,1.3) {l};
+        \node[blue, below=.4em, right=0em] at (2.375,1.3) {l};
+        \node[blue, below=.4em, right=0em] at (2.500,1.3) {o};
+        \node[blue, below=.4em, right=0em] at (2.500,1.3) { };
+        \node[blue, below=.4em, right=0em] at (2.625,1.3) {!};
+        \node[blue, below=.4em, right=0em] at (2.700,1.3) {\textbackslash n};
+        \node[blue, below=.4em, right=0em] at (2.825,1.3) {\textbackslash 0};
+        
+        \node[above=.6em] at (2,1) {\#16};
+        \node[above=.6em] at (2.5,1) {\#20};
+        \node[above=.6em] at (3,1) {\#24};
+        
+        
+        
+        \node[blue, below=.4em, right=0em] at (0.4,1.3) {char*};
+        \draw[dashed, blue] (0,1) -- (1,1);
+        \draw[dashed, blue] (1,1) -- (1,1.3);
+        \draw[dashed, blue] (0,1.3) -- (1,1.3);
+        \draw[dashed, blue] (0,1) -- (0,1.3);
+
+        \draw[orange, dashed] (2,1) -- (2,1.9) node[right=1.7em, above=0em]{String Data};
+       % \draw[orange, dashed] (2,1) -- (3,1);
+        \draw[orange, dashed] (3,1) -- (3,1.9);
+        \draw[orange, dashed] (2,1.9) -- (3,1.9);        
+        
+        
+        \node[teal, below=.4em, right=0em] at (1.4,1.3) {junk...};
+        \draw[dashed, teal] (1,1) -- (2,1);
+        \draw[dashed, teal] (2,1) -- (2,1.3);
+        \draw[dashed, teal] (1,1.3) -- (2,1.3);
+        \draw[dashed, teal] (1,1) -- (1,1.3);
+        \draw [->,teal] (0.9,1) to [out=320,in=210] (2.05,1);
+        \draw [->,teal] (2.940,0.7) to (2.930,1);
+        \node[teal, below=.3em] at (2.940,0.9) 
+            {zero byte indicates end or string};
+    \end{tikzpicture}
+\begin{itemize}
+    \item Strings avoid the length problem by always storing a zero byte after them.
+    \item  For this reason C Strings are also called "Zero terminated strings".
+    \item Zero means the literal byte value 0 here, not the textual number 
+        (which is ascii index 48).
+    \item We can represent this character value using \code{'\\0'}.
+    \item Case study: \code{puts("Foo!\\0 Bar!");} Will only output \code{Foo! }. 
+    \item For this reason we use arrays for arbitrary byte sequences instead. 
+\end{itemize}
+    
+\end{frame}
+
+\begin{frame}[fragile]{string utility functions}
+    The C standard library contains some useful functions to work with strings.
+    For a full listing of the c library check
+    \url{http://www.cplusplus.com/reference/clibrary/}
+    Here are some of the most useful ones:
+    \begin{itemize}
+        \item \code{size_t strlen(char * str);}
+    
+        Returns the length of the string (not including the null terminator).
+    
+        \item \code{size_t strcmp(char * str1, char * str2);}
+        
+        Compares the two strings. returns 0 when equal, otherwise 
+        a value with the sign of of str1[n] - str2[n], where n is the index 
+        of the first differing character 
+        
+        \item \code{char * strchr(char * str, char c);}
+        
+        Returns a pointer to the first occurence of \code{c} in \code{str}.
+        If none is found, returns \code{NULL}.
+
+        \item \code{char * strstr (char* str, char* substr);}
+        
+        Returns a pointer to the first occurence of \code{substr} in \code{str}.
+        If none is found, returns \code{NULL}.
+    \end{itemize}
+ 
+\end{frame}
+
+
+\begin{frame}[fragile]{fgets}
+    \code{fgets} is a function from the c standard library that is 
+    allows us to read in a string. It reads characters into a buffer
+    until it reaches a newline or the buffer is full. It always leaves space
+    and puts in a trailing zero byte afterwards.
+    The function signature is the following:
+    \begin{codeblock}[numbers=none]
+char* fgets(char *str, int count, FILE *stream );
+    \end{codeblock}
+    \begin{itemize}
+        \item \code{str} wants a pointer to a char buffer to 
+            store the read in data in
+        \item \code{count} wants the size of the \code{str}
+            buffer to avoid overflow. Because of the zero byte this means 
+            that we are reading in at most \code{count - 1} characters.
+        \item \code{stream} wants the byte stream to read from. In our case, this
+            will be \code{stdin}, which is then input stream from the terminal,
+            but it could also be a handle for a file stored on disk 
+        \item on success, fgets returns \code{str}, on error it returns \code{NULL}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{using fgets}
+    \begin{codeblock}
+#include <stdio.h>
+int main(int argc, char** argv){
+    char buffer[32];
+    char* tail = &buffer[sizeof(buffer) - 2];
+    *tail = '\n';
+    if(fgets(buffer, sizeof(buffer), stdin) != NULL){
+        printf("We received: %s", buffer);
+        // In case of overflow there wouldn't be a newline.
+        // We can check for overflow like this:
+        if(*tail != '\n' && *tail != '\0') puts("");
+    }
+    else{
+        puts("input error");
+    }
+}
+    \end{codeblock}
+\end{frame}
 \end{document}
