@@ -5,6 +5,7 @@
 \begin{frame}[fragile]{Task 8: A Dynamic Array}
     Start with the following piece of code and implement a dynamically growing
     array of integers that can hold as many elements as one likes.
+    When it's full and gets appended, it's capacity should double each time. 
     The following slides will describe in detail what each function is
     supposed to do. You can use as many additional helper functions as you like.
     You can also leave out functions that are too hard or too easy for you.
@@ -26,7 +27,7 @@ struct darray{
 
 \begin{frame}[fragile]{init}
     \begin{codeblock}
-int darray_init(darray* arr, int initial_capacity);
+int darray_init(struct darray* arr, size_t initial_capacity);
     \end{codeblock}
 
     \code{darray_init} initializes a new darray \code{arr}
@@ -38,70 +39,77 @@ int darray_init(darray* arr, int initial_capacity);
 
 \begin{frame}[fragile]{get}
     \begin{codeblock}
-int darray_get(darray* arr, int index, int* value);
+int darray_get(struct darray* arr, size_t index);
     \end{codeblock}
 
-    \code{darray_get} assigns \code{*value} from the element of the array
+    \code{darray_get} returns the value of the element of the array
     at index \code{index} (starting at 0).
 
-    Returns 0 on success, 1 if the index is out of bounds
+    The user of the function is responsible to not access
+    element that are out of bounds;
 \end{frame}
 
 \begin{frame}[fragile]{set}
     \begin{codeblock}
-int darray_set(darray* arr, int index, int value);
+void darray_set(struct darray* arr, size_t index, int value);
     \end{codeblock}
 
     \code{darray_get} assigns the element of the array at index
     \code{index} (starting at 0) to \code{value}.
 
-    Returns 0 on success, 1 if the index is out of bounds.
+    The user of the function is responsible for not accessing
+    element that are out of bounds;
 \end{frame}
 
 \begin{frame}[fragile]{append}
     \begin{codeblock}
-int darray_append(darray* arr, int value);
+int darray_append(struct darray* arr, int value);
     \end{codeblock}
 
     \code{darray_append} appends a new element with the value \code{value} 
     at the end of the array. If the array doesn't have space
-    for the additional element, reallocates the array 
+    for the additional element, reallocates the array, making its new capacity
+    twice as large.
     (hint: malloc, memcpy, free).
     
-    Returns 0 on success, 1 on error. Try to keep the previous array 'alive'
-    even in case of an allocation failiure.
+    Returns 0 on success, 1 on allocationerror.
+    Try to keep the previous array 'alive' even in case of
+    an allocation failiure.
 \end{frame}
 
 \begin{frame}[fragile]{erase}
     \begin{codeblock}
-int darray_erase(darray* arr, int index);
+void darray_erase(struct darray* arr, size_t index);
     \end{codeblock}
 
     \code{darray_erase} removes the  element at index 
     \code{index} (starting from 0) 
     from the array shifting all following elements forward (hint: memmove).
     
-    Returns 0 on success, 1 if the index is out of bounds.
+    The user of the function is responsible for not accessing
+    element that are out of bounds;
 \end{frame}
 
 
 \begin{frame}[fragile]{insert}
     \begin{codeblock}
-int darray_insert(darray* arr, int index, int value);
+int darray_insert(struct darray* arr, int index, int value);
     \end{codeblock}
 
     \code{darray_erase} inserts an element at index \code{index} 
     \code{index} (starting from 0). 
     All elements that were at and after that index move one
-    index forward (hint: memmove).
+    index forward (hint: memmove). If the insertion would bring the array
+    above it's capacity, it is reallocated to be twice as large.
     
-    Returns 0 on success, 1 if the index is out of bounds 
-    (cannot place without creating a gap).
+    Returns 0 on success, 1 on reallocation failiure.
+    The user of the function is responsible for not accessing
+    element that are out of bounds;
 \end{frame}
 
 \begin{frame}[fragile]{fin}
     \begin{codeblock}
-void darray_fin(darray* arr);
+void darray_fin(struct darray* arr);
     \end{codeblock}
 
     \code{darray_init} frees all memory of the passed \code{arr}.
@@ -119,11 +127,11 @@ void darray_fin(darray* arr);
 void main(){
     struct darray arr;
     darray_init(&arr, 1);
-    for(int i = 0; i <= 100; i++){
-        darray_append(&arr, i);
+    for(size_t i = 0; i <= 100; i++){
+        darray_append(&arr, (int)i);
     }
     int sum = 0;
-    for(int i = 0; i < arr.element_count; i++){
+    for(size_t i = 0; i < arr.element_count; i++){
         sum += darray_get(&arr, i);
     }
     assert(sum == 5050);
@@ -139,13 +147,13 @@ void main(){
 void main(){
     struct darray arr;
     darray_init(&arr, 1);
-    for(int i = 0; i <= 100; i++){
-        darray_append(&arr, i);
+    for(size_t i = 0; i <= 100; i++){
+        darray_append(&arr, (int)i);
         if(i % 10 == 5) darray_erase(&arr, i - 5);
-        if(i % 10 == 8) darray_insert(&arr, i - 5, i);
+        if(i % 10 == 8) darray_insert(&arr, i - 5, (int)i);
     }
     int sum = 0;
-    for(int i = 0; i < arr.element_count; i++){
+    for(size_t i = 0; i < arr.element_count; i++){
         sum += darray_get(&arr, i);
     }
     assert(sum == 5130);
