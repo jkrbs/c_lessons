@@ -13,9 +13,9 @@
 
 \usetheme{metropolis}
 % packages
-\title{Lesson 4}
+\title{Lesson 5}
 \author{Christian Schwarz, Jakob Krebs}
-\date{18.11.2019}
+\date{25.11.2019}
 \begin{document}
 \maketitle
 
@@ -56,7 +56,7 @@ void foo(){
 
 \begin{frame}[fragile]{typedef with structs}
     In many other programming languages, 
-    (including \code{C}'s bigger brother \code{C++}).
+    (including \code{C++}).
     We can use structs and enums just like the predefined types.
     So why do we have to write \code{struct foo} in \code{C}, instead of just
     \code{foo} ?. Well we don't \textbf{have} to.
@@ -92,5 +92,65 @@ typedef struct{
     inside itself, since the typedef isn't available until the end.
 
     Therefore we don't do that.
+\end{frame}
+
+\section{Macros}
+
+\begin{frame}[fragile]{define}
+
+We have talked about \code{#include<foo.h>}, which copies the content of foo.h into th file.
+
+But we can define values which will be pasted into our code.
+
+\begin{codeblock}
+#define SIZE 10
+#define PLAYER_CHAR '@'
+#define PI 3.14159265
+\end{codeblock}
+
+everywhere we use \code{SIZE}, it will be replaced by th e preprocessor with \code{10}
+\end{frame}
+
+\begin{frame}[fragile]{ifdef}
+there are some macros provided by our compiler, so we can detect our os:
+\begin{codeblock}
+#ifdef __linux__
+    #include"your_linux_lib.h"
+#elif _WIN32
+    #include"your_windows_lib.h" 
+#else
+    //not supported
+#endif
+\end{codeblock}
+
+here we check, if the macros \code{__linux__} or \code{_WIN32} exist.
+\end{frame}
+
+\begin{frame}[fragile]{header files}
+when our projects become large, we want to split our code into multiple files.
+But still our main file needs to know about all the functions. So we write the
+signatures into a header file (fileending is \code{.h})
+
+\begin{codeblock}
+//foo.h
+
+void do(int a, int b);
+int some(struct point);
+\end{codeblock}
+
+and we can include this file by writing
+\begin{codeblock}
+#include "foo.h"
+\end{codeblock}
+in our c files, wehere we want to use those functions.
+\end{frame}
+
+\begin{frame}{other things in header files}
+usually the follwing things are done in header files
+\begin{itemize}
+\item struct definitions
+\item includes from external libraries
+\item definition of macros
+\end{itemize}
 \end{frame}
 \end{document}
