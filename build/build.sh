@@ -13,18 +13,26 @@ function build() {
     # we need to call pdflatex twice to get the table of contents ... 
     for texfile in ./*.tex; do
         filename="${texfile%.*}"
-        if file_newer "$texfile" "$DIR/$1/$filename.pdf"; then
+        if $all || file_newer "$texfile" "$DIR/$1/$filename.pdf"; then
             pdflatex -output-directory "$DIR/$1" $texfile && 
                 pdflatex -output-directory "$DIR/$1" $texfile         
         fi
     done
     for mdfile in ./*.md; do
         filename="${mdfile%.*}"
-        if file_newer "$mdfile" -nt "$DIR/$1/$filename.pdf"; then
+        if $all || file_newer "$mdfile" -nt "$DIR/$1/$filename.pdf"; then
             pandoc "$mdfile" -o "$filename.pdf"
         fi
     done
 }
+
+all=false
+if [ $# -gt 1 ]; then
+    if [ $1 == "-a" ] || [ $1 == "--all" ]; then
+        all=true
+    fi
+fi
+
 build slides
 build tasks
 build task_solutions
