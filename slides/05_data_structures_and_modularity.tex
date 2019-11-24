@@ -888,17 +888,18 @@ C file!
     \begin{itemize}
         \item This code will just refuse to compile, since both files expect the other
         but somebody has to be looked at first. 
+        
         \item Sometimes you can factor out the shared portion into a third header that
         both files include
+        
         \item Sometimes you can just forward declare the one struct
         that you need from the other header. 
+
         \item Remember: Only include the headers that are 
               necessary for the declarations!
               
               Everything else belongs in the C file!
     \end{itemize}
 \end{frame}
-
-
 
 \end{document}
