@@ -10,7 +10,6 @@
 *.snm
 *.out
 *.fls
-*.pdf
 *.aux
 *.fdb_latexmk
 *.bbl
