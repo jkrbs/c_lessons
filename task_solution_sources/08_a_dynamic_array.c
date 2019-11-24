@@ -15,10 +15,6 @@ int darray_init(struct darray* arr, size_t initial_capacity)
     if (!arr->buffer) return 1;
     return 0;
 }
-void darray_fin(struct darray* arr)
-{
-    free(arr->buffer);
-}
 int darray_get(struct darray* arr, size_t index)
 {
     return arr->buffer[index];
@@ -40,13 +36,6 @@ int darray_append(struct darray* arr, int value)
     arr->buffer[arr->element_count] = value;
     arr->element_count++;
     return 0;
-}
-void darray_erase(struct darray* arr, size_t index)
-{
-    memmove(
-        arr->buffer + index, arr->buffer + index + 1,
-        (arr->element_count - index) * sizeof(int));
-    arr->element_count--;
 }
 int darray_insert(struct darray* arr, size_t index, int value)
 {
@@ -70,4 +59,15 @@ int darray_insert(struct darray* arr, size_t index, int value)
     }
     arr->element_count++;
     return 0;
+}
+void darray_erase(struct darray* arr, size_t index)
+{
+    memmove(
+        arr->buffer + index, arr->buffer + index + 1,
+        (arr->element_count - index) * sizeof(int));
+    arr->element_count--;
+}
+void darray_fin(struct darray* arr)
+{
+    free(arr->buffer);
 }
