@@ -1,0 +1,61 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 10: Binary Trees}
+
+    \begin{itemize}
+        \item Create a Binary Tree Library file \code{tree.c} with a corresponding
+            \code{tree.h} that allows one to call \code{tree_insert} to insert 
+            an integer into the tree.
+            The tree should always remain sorted so that the left child is smaller 
+            or equal to the root node, which is smaller than the right node.
+            Example:
+            \begin{codeblock}
+    1  
+   / \
+  2   5
+ / \ / \
+3  4 6  7
+            \end{codeblock}
+
+      
+        \item If you like, you can start out with the code that we created 
+              two weeks ago during the lesson:
+        \tiny
+        \url{https://jkrbs.github.io/c_lessons/task_solution_sources/intermediate_4_binary_tree.c}
+        
+        \normalsize
+
+        \item Add a \code{tree_print} method that prints the tree as an ordered list.
+
+        \item Create a small main file that uses \code{tree.h},
+              Adds 1 to 10 to a the tree and then prints the tree.
+              
+        \item Bonus: Can you write a method that prints the tree as shown above?
+    \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Task 9: Hints}
+    \begin{itemize}
+        \item The new \code{struct list_node} could look like this:
+            \begin{codeblock}
+typedef struct list_node {
+    int value;    
+    struct list_node* next;
+    struct list_node* previous;
+} list_node;
+            \end{codeblock}
+
+        \item \code{previous} of the first node is \code{NULL}
+        \item \code{next} of the last node is \code{NULL} 
+        \item If you forgot how the pointers have to point, 
+              look at the slides again, maybe they can help.
+        
+        \item Bonus Hint: Recursion :).
+\end{itemize}
+   
+    
+\end{frame}
+\end{document}
