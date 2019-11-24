@@ -40,18 +40,19 @@
     But how do you define a type?
     
     \begin{codeblock}
-typedef short tcp_port;
+typedef int foo_t;
 
-// we can now use tcp_port just like short:
+// we can now use foo_t just like short:
 void foo(){
-    tcp_port x = 3;
+    foo_t x = 3;
     short y = 4;
-    tcp_port z = x + y;
+    foo_t z = x + y;
 }
     \end{codeblock}
 
-    Using typedefs we can give our types more domain specific meaning,
-    helping somebody else who is using our code to understand. 
+    Using typedefs we can abstract away plattform differences,
+    shorten long type names (function pointers) etc.
+    But don't go out typedef'ing every integer you use :).
 \end{frame}
 
 \begin{frame}[fragile]{typedef with structs}
