@@ -38,7 +38,7 @@
     In previous lessons we said that \code{size_t} or \code{bool} are not
     native to the C type system, but library types built upon it.
     But how do you define a type?
-    
+
     \begin{codeblock}
 typedef int foo_t;
 
@@ -56,7 +56,7 @@ void foo(){
 \end{frame}
 
 \begin{frame}[fragile]{typedef with structs}
-    In many other programming languages, 
+    In many other programming languages,
     (including \code{C++}).
     We can use structs and enums just like the predefined types.
     So why do we have to write \code{struct foo} in \code{C}, instead of just
@@ -66,8 +66,8 @@ void foo(){
     \begin{codeblock}
 // struct point is the struct name, can be used as normal
 // the struct and typedef name can also be different
-typedef struct point{ 
-    int x, y; 
+typedef struct point{
+    int x, y;
 }point; //point now means the same as struct point
 
 point add(point p1, point p2){
@@ -80,12 +80,12 @@ point add(point p1, point p2){
     In old code the struct name is also left out:
 
     \begin{codeblock}
-typedef struct{ 
+typedef struct{
     //point* p; //this wouldn't work
-    int x, y; 
-}point; 
+    int x, y;
+}point;
 // C++ compilers would complain about a type conflict here
-// struct point;  
+// struct point;
     \end{codeblock}
 
     This can cause problems in forward declarations and when you
@@ -99,9 +99,13 @@ typedef struct{
 
 \begin{frame}[fragile]{define}
 
-We have talked about \code{#include<foo.h>}, which copies the content of foo.h into th file.
+We have talked about \code{#include <foo.h>}, which copies the content of
+foo.h into the file.
+This is done using the C preprocessor (as indicated by the \code{#}).
 
-But we can define values which will be pasted into our code.
+Using the preprocessor we can also map macro identifiers to strings.
+The occurences of the macro will then be replaced in our code during
+compilation / preprocessing.
 
 \begin{codeblock}
 #define SIZE 10
@@ -109,28 +113,34 @@ But we can define values which will be pasted into our code.
 #define PI 3.14159265
 \end{codeblock}
 
-everywhere we use \code{SIZE}, it will be replaced by th e preprocessor with \code{10}
+Everywhere we use \code{SIZE}, it will be replaced with \code{10} by the
+preprocessor.
 \end{frame}
 
 \begin{frame}[fragile]{ifdef}
-there are some macros provided by our compiler, so we can detect our os:
+There are many macros provided by our compiler,
+for example identifying the current os.
+We can check for these using another preprocessor feature: \code{#if}
 \begin{codeblock}
 #ifdef __linux__
-    #include"your_linux_lib.h"
-#elif _WIN32
-    #include"your_windows_lib.h" 
+#   include "your_linux_lib.h"
+    int some_linux_only_variable = 5;
+#elif defined(_WIN32)
+#   include "your_windows_lib.h"
 #else
-    //not supported
+#error your operating system is not supported
 #endif
 \end{codeblock}
 
-here we check, if the macros \code{__linux__} or \code{_WIN32} exist.
+Here we check, if the macros \code{__linux__} or \code{_WIN32} are defined
+in our file. The blocks inside the if statements
+are completely ignored if the condition is false.
 \end{frame}
 
 \begin{frame}[fragile]{header files}
-when our projects become large, we want to split our code into multiple files.
+When our projects become large, we want to split our code into multiple files.
 But still our main file needs to know about all the functions. So we write the
-signatures into a header file (fileending is \code{.h})
+signatures into a header file (extension is \code{.h} by convention)
 
 \begin{codeblock}
 //foo.h
@@ -301,7 +311,7 @@ usually the follwing things are done in header files
 	\ \\\ \\
 	\begin{itemize}[<+->]
 		\item Now we can build lists of this structures.
-		\item If we want to add a value at a specific position...
+		\item If we want to insert a value at a specific position...
 		\item ... we just have to change the pointers.
 	\end{itemize}
 	
@@ -728,8 +738,10 @@ usually the follwing things are done in header files
 		\end{tikzpicture}
 		\column{.6\textwidth}
 		\begin{itemize}
-			\item To minimize the complexity of list algorithms, binary trees are constructed
-			\item Such algorithms are e.g. searching, sorting, adding
+            \item To improve the performance of certain algorithms over lists,
+                  we can usse binary trees instead.
+            \item Typical such algorithms are lookup, insertion and removal
+                  of elements while maintaining an ordering.
 		\end{itemize}
 	\end{columns}
 \end{frame}
