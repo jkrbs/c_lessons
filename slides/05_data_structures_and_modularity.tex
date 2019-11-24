@@ -95,76 +95,6 @@ typedef struct{
     Therefore we don't do that.
 \end{frame}
 
-\section{Macros}
-
-\begin{frame}[fragile]{define}
-
-We have talked about \code{#include <foo.h>}, which copies the content of
-foo.h into the file.
-This is done using the C preprocessor (as indicated by the \code{#}).
-
-Using the preprocessor we can also map macro identifiers to strings.
-The occurences of the macro will then be replaced in our code during
-compilation / preprocessing.
-
-\begin{codeblock}
-#define SIZE 10
-#define PLAYER_CHAR '@'
-#define PI 3.14159265
-\end{codeblock}
-
-Everywhere we use \code{SIZE}, it will be replaced with \code{10} by the
-preprocessor.
-\end{frame}
-
-\begin{frame}[fragile]{ifdef}
-There are many macros provided by our compiler,
-for example identifying the current os.
-We can check for these using another preprocessor feature: \code{#if}
-\begin{codeblock}
-#ifdef __linux__
-#   include "your_linux_lib.h"
-    int some_linux_only_variable = 5;
-#elif defined(_WIN32)
-#   include "your_windows_lib.h"
-#else
-#error your operating system is not supported
-#endif
-\end{codeblock}
-
-Here we check, if the macros \code{__linux__} or \code{_WIN32} are defined
-in our file. The blocks inside the if statements
-are completely ignored if the condition is false.
-\end{frame}
-
-\begin{frame}[fragile]{header files}
-When our projects become large, we want to split our code into multiple files.
-But still our main file needs to know about all the functions. So we write the
-signatures into a header file (extension is \code{.h} by convention)
-
-\begin{codeblock}
-//foo.h
-
-void do(int a, int b);
-int some(struct point);
-\end{codeblock}
-
-and we can include this file by writing
-\begin{codeblock}
-#include "foo.h"
-\end{codeblock}
-in our c files, wehere we want to use those functions.
-\end{frame}
-
-\begin{frame}{other things in header files}
-usually the follwing things are done in header files
-\begin{itemize}
-\item struct definitions
-\item includes from external libraries
-\item definition of macros
-\end{itemize}
-\end{frame}
-
 \section{data structures}
 
 \subsection{linked list}
@@ -333,17 +263,9 @@ usually the follwing things are done in header files
    
     on our website (\url{https://jkrbs.github.io/c_lessons}).
 
-    \begin{itemize}
-		\item Task A: Write the function \code{list_insert} and test if your code works!
-        \item Task B: Move our code into a little library: 
-        \begin{itemize}
-            \item \code{list.c} which contains our implementation
-            \item \code{list.h} which forward declares our list interface.
-             \item Try to use the library from \code{main.c}!
-            \item Try and see what happens if you include the \code{list.h} header twice!
-        \end{itemize}
-       
-	\end{itemize}
+
+    Task: Write the function \code{list_insert} and test if your code works!
+
 \end{frame}
 
 \subsection{double linked list}
@@ -769,4 +691,214 @@ usually the follwing things are done in header files
 		\end{itemize}
 	\end{columns}
 \end{frame}
+
+\section{Macros}
+
+\begin{frame}[fragile]{define}
+
+We have talked about \code{#include <foo.h>}, which copies the content of
+foo.h into the file.
+This is done using the C preprocessor (as indicated by the \code{#}).
+
+Using the preprocessor we can also map macro identifiers to strings.
+The occurences of the macro will then be replaced in our code during
+compilation / preprocessing.
+
+\begin{codeblock}
+#define SIZE 10
+#define PLAYER_CHAR '@'
+#define PI 3.14159265
+\end{codeblock}
+
+Everywhere we use \code{SIZE}, it will be replaced with \code{10} by the
+preprocessor.
+\end{frame}
+
+\begin{frame}[fragile]{ifdef}
+There are many macros provided by our compiler,
+for example identifying the current os.
+We can check for these using another preprocessor feature: \code{#if}
+\begin{codeblock}
+#ifdef __linux__
+#   include "your_linux_lib.h"
+    int some_linux_only_variable = 5;
+#elif defined(_WIN32)
+#   include "your_windows_lib.h"
+#else
+#error your operating system is not supported
+#endif
+\end{codeblock}
+
+Here we check, if the macros \code{__linux__} or \code{_WIN32} are defined
+in our file. The blocks inside the if statements
+are completely ignored if the condition is false.
+\end{frame}
+
+\section{Libraries and Header Files}
+
+\begin{frame}[fragile]{header files}
+When our projects become large, we want to split our code into multiple files.
+But still our main file needs to know about all the functions. So we write the
+signatures into a header file (extension is \code{.h} by convention)
+
+\begin{codeblock}
+//foo.h
+typedef struct foo{
+    int x;
+}foo;
+
+void some_function(foo* s, int x);
+
+\end{codeblock}
+
+We can include this file by writing
+\begin{codeblock}
+#include "foo.h"
+\end{codeblock}
+in our C files, where we want to use those functions.
+\end{frame}
+
+\begin{frame}{other things in header files}
+Usually the follwing things are done in header files
+\begin{itemize}
+\item struct forward declarations (if we want to hide the implementation)
+\item includes from external libraries
+\item macros and typedefs
+\end{itemize}
+
+But: Headers should only include the headers they really need for the forward
+declarations. Headers only used for the implementation should be put in the
+C file!
+\end{frame}
+
+\begin{frame}[fragile]{Intermediate Task: Linked List Library}
+    No we will try to factor out our Linked List into a library.
+    If you haven't already, the code is still at.
+
+    \small
+    \url{https://jkrbs.github.io/c_lessons/tasks/intermediate_5_linked_list_insertion.c}
+    
+    Or just click on \code{Lesson 5 Intermediate Task Starting Point: Linked List Insertion}
+   
+    on our website (\url{https://jkrbs.github.io/c_lessons}).
+
+    The Task:
+
+    \begin{itemize}
+        \item Move our code into a little library: 
+        \begin{itemize}
+            \item \code{list.c} which contains our implementation
+            \item \code{list.h} which forward declares our list interface.
+        \end{itemize}
+        \item Add a \code{EMPTY_LIST} macro that can be used instead of \code{NULL}!
+        \item Try to use the library from \code{main.c}!
+        \item Try and see what happens if you include the \code{list.h} header twice!
+    \end{itemize}
+    
+\end{frame}
+
+\begin{frame}[fragile]{Multiple inclusions}
+    Sometimes with libraries we end up in a situation like this:
+    \begin{codeblock}
+// matrix.h
+#include "math.h"
+
+// vector.h
+#include "math.h"
+
+// main.c
+#include "vector.h"
+#include "matrix.h"
+    \end{codeblock}
+
+    What will happen during compilation?
+    \pause
+    \begin{itemize}
+        \item The math header will be included twice.
+       
+        \item This might cause compilation errors if structs are redeclared.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Include Guards}
+    How can we fix this?
+    \begin{itemize}
+        \item<2-> First We add a macro, indicating that the header has been included.
+        \item<3-> Then we check whether that macro has already been defined.
+        \item<4-> This concept is called include guards or header guards, and should
+            be used on virtually all headers
+    \end{itemize}
+    \begin{block}<only@1>{}
+        \begin{codeblock}
+// math.h
+
+// some math definitions...
+        \end{codeblock}
+    \end{block}
+
+    \begin{block}<only@2>{}
+        \begin{codeblock}
+// math.h
+#define MATH_H
+
+// some math definitions...
+        \end{codeblock}
+    \end{block}
+
+    \begin{block}<only@3->{}
+        \begin{codeblock}
+// math.h
+#ifndef MATH_H
+#define MATH_H
+
+// some math definitions...
+
+#endif
+        \end{codeblock}
+    \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Pragma once}
+    Alternatively, you can use \code{#pragma once}.
+    
+    This is nonstandard, but supported by all major compilers.
+    For this course, we recommend using it.
+    
+    \begin{codeblock}
+// math.h
+#pragma once
+
+// some math definitions...
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Cyclic include dependencies}
+    Sometimes with libraries we end up in a situation like this:
+
+    \begin{codeblock}
+//matrix.h
+#include "vector.h"
+
+//vector.h
+#include "matrix.h"
+    \end{codeblock}
+
+    What is the compiler supposed to do?
+    \pause
+    \begin{itemize}
+        \item This code will just refuse to compile, since both files expect the other
+        but somebody has to be looked at first. 
+        \item Sometimes you can factor out the shared portion into a third header that
+        both files include
+        \item Sometimes you can just forward declare the one struct
+        that you need from the other header. 
+        \item Remember: Only include the headers that are 
+              necessary for the declarations!
+              
+              Everything else belongs in the C file!
+    \end{itemize}
+\end{frame}
+
+
+
 \end{document}
