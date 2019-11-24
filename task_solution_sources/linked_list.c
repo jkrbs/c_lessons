@@ -32,7 +32,7 @@ void append_node(struct node* n, int value)
 {
     // iterate to the last node
     while ((*n).next != NULL) {
-        n++;
+        n = *n.next;
     }
     // change that node's next value to a new node
     (*n).next = add_node(value);
