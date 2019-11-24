@@ -13,6 +13,7 @@
 *.aux
 *.fdb_latexmk
 *.bbl
+/slides/**/*.pdf
 *.blg
 
 # for cmrs's sanity
