@@ -15,8 +15,8 @@ function build() {
     for texfile in ./*.tex ; do
         [ -e "$texfile" ] || continue
         filename="${texfile%.*}"
-        printf "\ncompiling $texfile ...\n"
         if [ $build_all = true ] || file_newer "$texfile" "$DIR/$1/$filename.pdf"; then
+            printf "\ncompiling $texfile ...\n"
             pdflatex --interaction=batchmode -output-directory "$DIR/$1" $texfile && 
                 pdflatex --interaction=batchmode -output-directory "$DIR/$1" $texfile || :        
         fi
@@ -24,9 +24,9 @@ function build() {
 
     for mdfile in ./*.md ; do
         [ -e "$mdfile" ] || continue
-        echo "compiling $mdfile ..."
         filename="${mdfile%.*}"
         if [ $build_all = true ] || file_newer "$mdfile" -nt "$DIR/$1/$filename.pdf"; then
+            echo "compiling $mdfile ..."
             pandoc "$mdfile" -o "$filename.pdf"
         fi
     done
