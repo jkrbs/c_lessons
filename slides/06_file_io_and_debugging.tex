@@ -34,23 +34,26 @@
 \end{frame}
 
 \begin{frame}[fragile]{fopen and fclose}
-    To read and write files in c, \code{stdio.h}
-    provides the following functions.
+    \code{stdio.h} provides the following functions to open and close a file:
 
     \begin{codeblock}
 FILE* fopen (char* filename, char* mode);
 int fclose (FILE* stream);
-    \end{codeblock}
 
-    With these functions, we can open and close a file. 
-    Example:
-
-    \begin{codeblock}
+//example
 FILE* test = fopen("test.txt", "w");
-assert(test != NULL);
-//use the file, more on this afterwards
 fclose(test);
     \end{codeblock}
+
+    Filenames can either be absolute (\code{"/home/foo/bar.txt"}) 
+    or relative (\code{"test.txt"}). 
+    Relative paths are relative to the "current working directory".
+    That is the current directory of your shell when you execute the program.
+    Shells can usually change this directory using \code{cd} (change directory), 
+    and display it using \code{pwd} (print working directory).
+
+
+    \textbf{This is not necessarily the directory that the program executable lies in.}  
 \end{frame}
     
 
@@ -121,17 +124,13 @@ size_t bytes_read = fread(buffer, 1, sizeof(buffer), file);
     \end{codeblock}
 
     \end{small}
-    
 \end{frame}
 
 \begin{frame}[fragile]{file io example}
-     
-    Example Usage:
+    
     \begin{codeblock}
-        FILE* test = fopen("test.txt", "r+");
-        assert(test != NULL);
-       
-        fclose(test);
+FILE* config = fopen("config.txt"); 
+
     \end{codeblock}
 
 \end{frame}
