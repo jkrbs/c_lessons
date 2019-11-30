@@ -1,0 +1,95 @@
+% document
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+% theme
+\usetikzlibrary{arrows}
+\tikzstyle{line}=[draw] % here
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{arrow/.style={-latex, shorten >=.5ex, shorten <=.5ex}}
+
+\usetheme{metropolis}
+% packages
+\title{Lesson 6}
+\author{Christian Schwarz, Jakob Krebs}
+\date{25.11.2019}
+\begin{document}
+\maketitle
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
+
+\section{File IO and Debugging}
+\begin{frame}{Sources and Solutions}
+    \begin{itemize}
+        \item we publish all code written in this course at \url{https://github.com/jkrbs/c_lessons}
+        \item we will publish example solutions of the tasks on same site
+        \item send us questions or your solutions to c-lessons@deutschland.gmbh
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{fopen and fclose}
+    To read and write files in c, \code{stdio.h}
+    provides the following functions.
+
+    \begin{codeblock}
+FILE* fopen (char* filename, char* mode);
+int fclose (FILE* stream);
+    \end{codeblock}
+
+    With these functions, we can open and close a file. 
+    Example:
+
+    \begin{codeblock}
+FILE* test = fopen("test.txt", "w");
+assert(test != NULL);
+//use the file, more on this afterwards
+fclose(test);
+    \end{codeblock}
+\end{frame}
+    
+
+\begin{frame}{file modes}
+    \code{FILE*} can be thought of as a pointer to a FILE structure managed
+    by the C standard library that remembers all the necessary information
+    to interact with the file. 
+
+    The \code {"w"} mode in \code{fopen(filename, mode)} specifies that we
+    only want to \textbf{w}rite to the file.
+    There are multiple different modes available: 
+
+
+    \begin{tabular}{|l|l|l|l|}
+        \hline 
+        \textbf{mode} & \textbf{access} & \textbf{if file exists} & \textbf{if file doesn't exist}\\ \hline 
+        \textbf{r} & read-only & read from start & return NULL \\\hline
+        \textbf{w} & write-only & overwrite contents & create new \\\hline
+        \textbf{a} & write-only & append & create new \\\hline
+        \textbf{r+} & read+write & read from start, overwrite & return NULL \\\hline
+        \textbf{w+} & read+write & read from start, overwrite & create new \\\hline
+        \textbf{a+} & read+write & read from start, but append at the end& create new \\\hline
+    \end{tabular}
+\end{frame}
+
+\begin{frame}{useful gdb commands}
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{file} & load program\\\hline
+        \textbf{r[un]} & execute program\\\hline
+        \textbf{b[reak]} & set breakpoint\\\hline
+        \textbf{sta[rt]} & execute program and break immediately\\\hline
+        \textbf{p[rint]} & print variable\\\hline
+        \textbf{w[atch]} & break and print variable when it changes\\\hline
+        \textbf{n[ext]} & execute next line and break\\\hline
+        \textbf{s[tep]} & execute next instruction and break\\\hline
+        \textbf{c[ontinue]} & execute until next breakpoint\\\hline
+        \textbf{backtrace} / \textbf{bt} & How did I end up here?\\\hline
+    \end{tabular}
+\end{frame}
+
+\end{document}
