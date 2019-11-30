@@ -55,10 +55,6 @@ fclose(test);
     
 
 \begin{frame}{file modes}
-    \code{FILE*} can be thought of as a pointer to a FILE structure managed
-    by the C standard library that remembers all the necessary information
-    to interact with the file. 
-
     The \code {"w"} mode in \code{fopen(filename, mode)} specifies that we
     only want to \textbf{w}rite to the file.
     There are multiple different modes available: 
@@ -74,6 +70,70 @@ fclose(test);
         \textbf{w+} & read+write & read from start, overwrite & create new \\\hline
         \textbf{a+} & read+write & read from start, but append at the end& create new \\\hline
     \end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]{"File"}
+    
+    \code{FILE*} can be thought of as a pointer to a FILE structure managed
+    by the C standard library that remembers all the necessary information
+    to interact with the file. 
+    
+    "File" should not be taken too literally here.
+    Stream might have been the better term.
+    For example, \code{stdin} and \code{stdout} are also \code{FILE*}s.
+
+    It really just means an object that bytes 
+    can be written to and / or read from.
+
+\end{frame}
+
+\begin{frame}[fragile]{fread and fwrite}
+    \begin{small}
+
+    \begin{codeblock}[numbers=none, basicstyle=\small]
+size_t fread(void* buffer, size_t size, size_t count, FILE* stream);
+size_t fwrite(void* buffer, size_t size, size_t count, FILE* stream);
+    \end{codeblock}
+
+    \begin{itemize}
+        \item \code{fread} reads bytes from the \code{stream} and writes them into 
+        \code{buffer}.  
+
+        \item \code{fwrite} reads bytes from \code{buffer} and writes them out to the 
+        \code{stream}. 
+    
+    \end{itemize}
+
+    The functions read/write \code{size} bytes for up to \code{count} times, or until 
+    the stream has no more contents.
+
+    They return the number of elements 
+    (of size \code{size}) successfully read/written.
+
+    Sometimes this is useful, e.g. if we want to read up to 20 \code{int}s:
+    \begin{codeblock}[numbers=none, basicstyle=\small]
+size_t ints_read = fread(buffer, sizeof(int), 20, file);
+    \end{codeblock}
+
+    But mostly we use them like this:
+    \begin{codeblock}[numbers=none, basicstyle=\small]
+size_t bytes_read = fread(buffer, 1, sizeof(buffer), file);
+    \end{codeblock}
+
+    \end{small}
+    
+\end{frame}
+
+\begin{frame}[fragile]{file io example}
+     
+    Example Usage:
+    \begin{codeblock}
+        FILE* test = fopen("test.txt", "r+");
+        assert(test != NULL);
+       
+        fclose(test);
+    \end{codeblock}
+
 \end{frame}
 
 \begin{frame}{useful gdb commands}
