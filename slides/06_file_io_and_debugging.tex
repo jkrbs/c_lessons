@@ -15,7 +15,7 @@
 % packages
 \title{Lesson 6}
 \author{Christian Schwarz, Jakob Krebs}
-\date{25.11.2019}
+\date{02.12.2019}
 \begin{document}
 \maketitle
 
@@ -147,7 +147,114 @@ fclose(config);
     \end{codeblock}
 
 \end{frame}
+\section{debugging}
+\begin{frame}{Motivation}
+we make mistakes in our code and want to see the state of our program (variables) at a certain state
 
+There are different kinds of errors.
+	\begin{itemize}
+		\item Compiletime errors
+		\item Runtime errors (\textit{bugs})
+	\end{itemize}\ \\\ \\
+	\textit{Compiletime errors} are easily handable since the compiler shows you where to fix them.\\\ \\
+	\textit{Bugs} on the other hand are harder to find because you have no idea where to look for them.
+\end{frame}
+
+\begin{frame}{bug types}
+	Bugs can appear due to different reasons
+	\begin{itemize}
+		\item Variable overflow
+		\item Division by zero
+		\item Infinite loops / recursions
+		\item Range excess
+		\item Segmentation fault
+		\item Dereferencing \textit{NULL pointers}
+		\item ...
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{debuggers}
+
+Debuggers help us to find those issues, e.g. by alllowing use to pause the program at a certain line 
+most development envirements have integrated debugging systems.
+
+popular tools are:
+
+\begin{itemize}
+    \item gdb (GNU Debugger) for general debuging
+    \item valgrind for finding memory leaks and other memory issues
+\end{itemize}
+\end{frame}
+\begin{frame}[fragile]{The \textbf{G}NU \textbf{D}e\textbf{B}ugger}
+	There are tools helping with bugs, called debuggers. GDB is one of them.\\
+	\bigskip
+	To use it
+	\begin{itemize}
+		\item You have to install the package \textit{gdb}\\
+		\item You have to compile your program with the \textit{-g} flag
+\begin{code}
+gcc -g main.c
+\end{code}
+		\item After that you can start your program with gdb:
+		\begin{code}
+gdb a.out
+\end{code}
+	\end{itemize}
+\end{frame}
+\begin{frame}{Commands}
+	\begin{itemize}
+		\item If you started gdb without a file you can load it with \textbf{file} \textit{file\_name}.
+		\item Use \textbf{r[un]} to execute the program with gdb.\\
+		You should begin with that. It will give you further information about the crash.
+		\item You can set an arbitrary amount of breakpoints with \textbf{b[reak]} \textit{line\_number} or \textbf{b[reak]} \textit{function\_name}.\\
+		Begin with a breakpoint at the point the program crashes.
+		\item Print values with \textbf{p[rint]} \textit{identifier}.
+		\item Use \textbf{w[atch]} \textit{identifier} to break and print a variable when it's changed.
+	\end{itemize}
+\end{frame}
+\begin{frame}{Once you're at a breakpoint}
+	\begin{itemize}
+		\item Use \textbf{n[ext]} to execute the next program line only.
+		\item \textbf{s[tep]} executes the next instruction.
+		\item You can jump to the next breakpoint with \textbf{c[ontinue]}.
+		\item To see how you have come to this point in the program flow, type \textbf{backtrace} or \textbf{bt}.\\
+		This shows you all functions you called to come there.
+		\\\ \\
+		\item By only hitting the \textit{return key}, you repeat the last entered  command.
+	\end{itemize}
+	
+\end{frame}
+\begin{frame}[fragile]{Conditional breakpoints}
+After setting a breakpoint, GDB assigns an ID to it.\\
+You can use this ID to extend the functionality of that breakpoint.
+	\begin{itemize}
+		\item \textbf{con[dition]} \textit{breakpoint\_ID expression} adds a condition to your Breakpoint:
+		\begin{lstlisting}[numbers=none,language=bash]
+(gdb) br 42
+Breakpoint 1 at 0xbada55: file main.c, line 42.
+(gdb) condition 1 i@=@@=@3
+\end{lstlisting}
+		\item For string comparison, set the string before comparing with \textbf{strcmp}:
+		\begin{code}
+(gdb) br main.c:42
+Breakpoint 13 at 0xdeadbeef: file main.c, line 42.
+(gdb) set $string_to_compare = "lolwut"
+(gdb) cond 13 strcmp ( $stringtocompare, c ) @=@@=@ 0
+\end{code}
+	\end{itemize}
+\end{frame}
+\begin{frame}{The dungeon}
+	We copied a little ASCII dungeon from former c courses.\\
+	You can find it in the repository (\url{https://jkrbs.github.io/c_lessons/src/dungeon.c}\\
+	\begin{itemize}
+		\item Look at the code and try to understand what should happen.
+		\item If you find mistakes, please leave them. We'll fix them later.
+		\\\ 
+		\item Compile it (with \textit{-std=c99}).
+		\\\ 
+		\item And now run it.
+	\end{itemize}
+\end{frame}
 \begin{frame}{useful gdb commands}
     \begin{tabular}{|l|l|}
         \hline
