@@ -4,9 +4,9 @@ set -Eeuo pipefail
 DIR="$(dirname "$(readlink -f "$0")")" #directory of shell script
 function file_newer(){
     file_1_commit=$(git log --follow -n 1 --pretty=format:"%h" -- $1)
-    file_2_commit=$(git log --follow -n 1 --pretty=format:"%h" -- $2)
-    latest=$(git log --pretty=format:"%h" | grep "$file_1_commit\\|$file_2_commit" | head -n 1)
-    test "$file_1_commit" == "$latest"
+    file_2_commit=$(git log --follow -n 1 --pretty=format:"%h" -- $2) 
+    later=$(git log --pretty=format:"%h" | grep "$file_1_commit\\|$file_2_commit" | head -n 1)
+    test "$file_2_commit" != "$later"
 }
 function build() {
     cd "$DIR/../$1/"
