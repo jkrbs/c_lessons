@@ -15,7 +15,7 @@
 % packages
 \title{Lesson 6}
 \author{Christian Schwarz, Jakob Krebs}
-\date{25.11.2019}
+\date{2.12.2019}
 \begin{document}
 \maketitle
 
@@ -77,16 +77,23 @@ fclose(test);
 
 \begin{frame}[fragile]{"File"}
     
-    \code{FILE*} can be thought of as a pointer to a FILE structure managed
-    by the C standard library that remembers all the necessary information
-    to interact with the file. 
-    
-    "File" should not be taken too literally here.
-    Stream might have been the better term.
-    For example, \code{stdin} and \code{stdout} are also \code{FILE*}s.
+    \begin{itemize}
+        \item  \code{FILE*} can be thought of as a pointer to a FILE structure managed
+        by the C standard library that remembers all the necessary information
+        to interact with the file. 
 
-    It really just means an object that bytes 
-    can be written to and / or read from.
+        \item  "File" should not be taken too literally here.
+        Stream might have been the better term.
+        For example, \code{stdin} and \code{stdout} are also \code{FILE*}s.
+
+        \item Streams or "\code{FILE}"s really just represent an object that bytes 
+            can be written to and / or read from.
+    \end{itemize}
+   
+    
+  
+
+  
 
 \end{frame}
 
@@ -137,13 +144,134 @@ char buffer[1024];
 do{
     size_t size = fread(&buffer, 1, sizeof(buffer), logfile);
     display_log(&buffer, size); // use the data
-} while(bytes > 0);
+} while(size > 0);
 
 char* msg = "we accessed the log file\n";
 size_t size = fwrite(msg, strlen(msg), 1, log);
 assert(size == 1); // was our data written successfully ?
 
 fclose(config);
+    \end{codeblock}
+
+\end{frame}
+
+\section{Debugging}
+\begin{frame}[fragile]{Debugging}
+    There's multiple possibilities why a program doesn't work as intended.
+    As we discussed, the broad classification is between.
+    \begin{itemize}
+		\item Compiletime (+ link time) errors
+		\item Runtime errors ( also called \textit{bugs})
+	\end{itemize}\ \\\ \\
+	\textit{Compiletime errors} are easily handable since the compiler shows you where and what they are\\\ \\
+    \textit{Bugs} are oftentimes much harder to find because they could be 
+        anywhere in your program and nobody warns you.
+\end{frame}
+
+\begin{frame}{Different kinds of Bugs}
+	Bugs can appear due to different reasons
+	\begin{itemize}
+		\item Variable overflow
+		\item Division by zero
+		\item Infinite loops / recursions
+		\item Range excess
+		\item Segmentation fault
+		\item Dereferencing \code{NULL} (or other invalid) pointers
+		\item ...
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{The GNU Debugger (gdb) }
+	There are tools helping with bugs, called debuggers. GDB is one of them.\\
+	\bigskip
+	To use it
+	\begin{itemize}
+		\item You have to install the package \textit{gdb}\\
+		\item You have to compile your program with the \textit{-g} flag
+		\begin{lstlisting}[numbers=none]
+$ gcc -g main.c
+\end{lstlisting}
+		\item After that you can start your program with gdb:
+		\begin{lstlisting}[numbers=none]
+$ gdb a.out
+\end{lstlisting}
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Using gdb}
+    \begin{lstlisting}
+$ gdb -g intermediate_06_asciidungeon.c
+$ gdb a.out
+(gdb) start
+Temporary breakpoint 1, main (argc=1, argv=0x7fffffffe028) at ...
+41          player = init_entity(5, 8, 100, 'J');
+(gdb) next
+42          monster1 = init_entity(2, 3, 100, '*');
+(gdb) step
+init_entity (x_pos=2, y_pos=3, health=100, symbol=42 '*') at ...
+104         struct entity *new_ent = malloc(sizeof new_ent);
+(gdb) backtrace 
+#0  init_entity (x_pos=2, y_pos=3, health=100, symbol=42 '*') at ...
+#1  0x0000555555554938 in main (argc=1, argv=0x7fffffffe028) at ...
+(gdb)    
+\end{lstlisting}
+
+\end{frame}
+\begin{frame}{Commands}
+	\begin{itemize}
+        \item If you started gdb without a file you can load it with
+            \textbf{file} \textit{file\_name}.
+		\item Use \textbf{r[un]} to execute the program with gdb.\\
+            If you have a segfault, it's a good idea to begin with that.
+            It will give you further information about the crash location.
+        \item If you want to debug from the beginning use \textbf{sta[rt]}
+            to run and immediately break\\
+        \item You can set an arbitrary amount of breakpoints
+            with \textbf{b[reak]} \textit{line\_number} or \textbf{b[reak]} \textit{function\_name}.\\
+		    Begin with a breakpoint at the point right before program crashes.
+		\item Print values with \textbf{p[rint]} \textit{identifier}.
+        \item Use \textbf{w[atch]} \textit{identifier} to break and print
+            a variable when it's changed.
+	\end{itemize}
+\end{frame}
+\begin{frame}{Once you're at a breakpoint}
+	\begin{itemize}
+		\item Use \textbf{n[ext]} to execute the next program line only.
+		\item \textbf{s[tep]} executes the next instruction.
+		\item You can jump to the next breakpoint with \textbf{c[ontinue]}.
+		\item To see how you have come to this point in the program flow, type \textbf{backtrace} or \textbf{bt}.\\
+		This shows you all functions you called to come there.
+		\\\ \\ \\
+		\item By only hitting the \textit{return key}, you repeat the last entered  command.
+	\end{itemize}
+	
+\end{frame}
+\begin{frame}[fragile]{Conditional breakpoints}
+After setting a breakpoint, GDB assigns an ID to it.\\
+You can use this ID to extend the functionality of that breakpoint.
+	\begin{itemize}
+		\item \textbf{con[dition]} \textit{breakpoint\_ID expression} sets a condition for your Breakpoint:
+		\begin{lstlisting}[numbers=none,language=bash]
+(gdb) br 42
+Breakpoint 1 at 0xbada55: file main.c, line 42.
+(gdb) condition 1 i@=@@=@3
+        \end{lstlisting}
+		\item For string comparison, set the string before comparing with \textbf{strcmp}:
+		\begin{lstlisting}
+(gdb) br main.c:42
+Breakpoint 13 at 0xdeadbeef: file main.c, line 42.
+(gdb) set $string_to_compare = "lolwut"
+(gdb) cond 13 strcmp ( $stringtocompare, c ) @=@@=@ 0
+        \end{lstlisting}
+        \item use \textbf{con[dition]} \textit{breakpoint\_ID} to remove the condition:
+	\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{gdb --tui Mode}
+    If you want a nicer interface where you can see multiple lines of your program,
+    use 
+    \begin{codeblock}
+gdb --tui a.out
     \end{codeblock}
 
 \end{frame}
@@ -162,6 +290,21 @@ fclose(config);
         \textbf{c[ontinue]} & execute until next breakpoint\\\hline
         \textbf{backtrace} / \textbf{bt} & How did I end up here?\\\hline
     \end{tabular}
+\end{frame}
+
+\begin{frame}[fragile]{Task: Bughunting in the Ascii Dungeon}
+    We (or more precisely, the fsr) prepared a little ascii dungeon
+    littered with bugs. You can find it at. 
+
+    \small
+    \url{https://jkrbs.github.io/c_lessons/tasks/intermediate_06_asciidungeon.c}
+    
+    Or just click on \code{Lesson 6 Intermediate Task: Bughunting in the Ascii Dungeon}
+    on our website (\url{https://jkrbs.github.io/c_lessons}).
+
+
+    Task: Fix all the bugs in the program using \code{gdb}, until you can
+    run around on the Screen using wasd (+ Enter)! 
 \end{frame}
 
 \end{document}
