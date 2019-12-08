@@ -26,4 +26,211 @@
         \item send us questions or your solutions to c-lessons@deutschland.gmbh
     \end{itemize}
 \end{frame}
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
+\section{Parallelism}
+\subsection{}
+\begin{frame}{Executing code in parallel}
+    Each program has a process associated with it. At program start, this process has
+    exactly one thread executing your \code{main} function.\\
+    \bigskip
+    To achieve parallelism, you can
+    \begin{itemize}
+            \item create a new process running the same code
+            \item call a function in a new thread
+    \end{itemize}
+    \bigskip
+    In Unix systems, processes are created with the \code{fork} system call.\\
+    The new process will have its own memory to work with.\\
+    For starting threads, libraries such as \code{p[osix]threads} are used.\\
+    All threads of a process share the same memory.
+\end{frame}
+
+\begin{frame}[fragile]{Use the fork}
+    \begin{codeblock}
+#include <unistd.h>
+int main(void) {
+    pid_t pid = fork();
+    if (pid == 0) {
+        /* do stuff in child process */
+    } else if (pid > 0) {
+        /* do stuff in parent process */
+    } else {
+        /* fork failed */
+        return 1;
+    }
+    return 0;
+}
+\end{codeblock}
+
+    Have a look at \code{man 2 fork} for further information.
+\end{frame}
+
+\section{pthreads}
+\subsection{}
+\begin{frame}[fragile]{pthread\_create}
+    To execute a function in a new thread, use:
+    \begin{codeblock}
+int pthread_create(pthread_t *thread,
+                   const pthread_attr_t *attr,
+                   void *(*start_routine) (void *),
+                   void *arg);
+\end{codeblock}
+    where
+    \begin{itemize}
+            \item *\code{thread} is where the thread's id will be stored
+            \item *\code{attr} contains attributes for the thread (pass \code{NULL} for default)
+            \item \code{start\_routine} is the function to execute. Both the single argument and the return value must be \code{void *}.
+            \item \code{arg} is passed to the function to be used as an argument
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{code example: threads}
+    \begin{codeblock}
+#include <pthread.h>
+#include <stdio.h>
+
+void *hello_thread(void *tid) {
+    printf("Hello, I am thread %d\n", *(int*) tid);
+    pthread_exit(NULL);
+}
+
+int main(void) {
+    pthread_t threads[5];
+    for (int i=0; i < 5; ++i) {
+       if (pthread_create(&threads[i], NULL,
+                          hello_thread, (void *) i))
+          return 1;
+    }
+    return 0;
+}
+
+\end{codeblock}
+\end{frame}
+\begin{frame}[fragile]{How threads end}
+    \begin{itemize}
+        \item \code{pthread\_exit} is called
+        \begin{codeblock}
+void pthread_exit(void *retval);
+\end{codeblock}
+        \item \code{pthread\_cancel} is called from another thread
+        \begin{codeblock}
+int pthread_cancel(pthread_t thread);
+\end{codeblock}
+        \item \code{exit} is called from any thread (ending the process)
+        \item \code{main} finishes before \code{startdd\_routine} (ending the process)
+    \end{itemize}
+\end{frame}
+\begin{frame}[fragile]{Waiting for threads}
+    To wait for a thread to finish, there is \code{pthread\_join}
+    \begin{codeblock}
+int pthread_join(pthread_t thread, void **retval);
+\end{codeblock}
+    \bigskip
+    The thread passed to \code{pthread\_join} must be joinable. For that we need the
+    \code{pthread\_attr\_t} structure. Here is how to initialise and destroy it:\\
+        \begin{codeblock}
+int pthread_attr_init(pthread_attr_t *attr);
+int pthread_attr_destroy(pthread_attr_t *attr);
+\end{codeblock}
+    \bigskip
+    How to set/get the detachstate (pass \code{PTHREAD\_CREATE\_JOINABLE}):
+    \begin{codeblock}
+int pthread_attr_setdetachstate(pthread_attr_t *attr,
+                                int detachstate);
+int pthread_attr_getdetachstate(const pthread_attr_t *attr,
+                                int *detachstate);
+\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{code example: joinable threads}
+    \begin{codeblock}
+int main(void) {
+    pthread_t threads[5];
+    pthread_attr_t attr;
+    
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    
+    for (int i=0; i < 5; ++i) {
+       if (pthread_create(&threads[i], &attr,
+                          hello_thread, (void *) i))
+          return 1;
+    }
+    pthread_attr_destroy(&attr);
+
+    void *st;
+    for (int i=0; i < 5; ++i) {
+       if (pthread_join(thread[i], &st))
+           return 1;
+       printf("Thread %d finished with %d\n", i, *(int *) st);
+    }
+    
+    return 0;
+}
+\end{codeblock}
+\end{frame}
+
+\section{Mutual Exclusion}
+\subsection{}
+\begin{frame}[fragile]{Mutexes}
+    Threads can communicate with each other by manipulating global variables or the value behind the \code{arg} pointer we pass to \code{pthread\_create}.\\
+    To avoid race conditions, the pthread library provides mutexes.
+    \begin{codeblock}
+int pthread_mutex_destroy(pthread_mutex_t *mutex);
+int pthread_mutex_init(pthread_mutex_t *restrict mutex,
+                 const pthread_mutexattr_t *restrict attr);
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+\end{codeblock}
+    \bigskip
+    A mutex is a datatype that can be locked before and unlocked after accessing a variable.
+    \begin{codeblock}
+int pthread_mutex_lock(pthread_mutex_t *mutex);
+int pthread_mutex_unlock(pthread_mutex_t *mutex);
+\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{mutex example}
+    \begin{codeblock}
+struct stuff {
+    unsigned a;
+    unsigned b;
+}
+
+struct stuff global = {1, 2};
+pthread_mutex_t mutex;
+
+void *thread(void *tid) {
+    pthread_mutex_lock(mutex);
+    global.b = a;
+    pthread_mutex_unlock(mutex);
+    
+    pthread_exit(NULL);
+}
+\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Deadlocks incoming}
+     \begin{codeblock}
+void *thread_1(void *tid) {
+    pthread_mutex_lock(mutex_1);
+    pthread_mutex_lock(mutex_2);
+    /* stuff */
+    pthread_mutex_unlock(mutex_1);
+    pthread_mutex_unlock(mutex_2);
+    pthread_exit(NULL);
+}
+void *thread_2(void *tid) {
+    pthread_mutex_lock(mutex_2);
+    pthread_mutex_lock(mutex_1);
+    /* stuff */
+    pthread_mutex_unlock(mutex_2);
+    pthread_mutex_unlock(mutex_1);
+    pthread_exit(NULL);
+}
+    \end{codeblock}
+\end{frame}
 \end{document}
