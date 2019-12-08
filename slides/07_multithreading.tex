@@ -19,6 +19,10 @@
 \begin{document}
 \maketitle
 
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
 \begin{frame}{Sources and Solutions}
     \begin{itemize}
         \item we publish all code written in this course at \url{https://github.com/jkrbs/c_lessons}
@@ -27,9 +31,156 @@
     \end{itemize}
 \end{frame}
 
-\begin{frame}{Contents}
-    \tableofcontents
+
+\section{Type Qualifiers}
+\begin{frame}[fragile]{const}
+    To give more information about a variable to the compiler, you can\\
+    \textit{qualify} its type. 
+    
+    The most common type qualifier is \code{const}.
+    It prevents the qualified variable from being modified.
+    If you try anyways you will get a compiler error.
+
+    \begin{codeblock}
+// request that x can't be written to (after initialization)
+int const x = 3; 
+x = 3; // error: assignment of read-only variable 'x'
+
+void f(int *a); // forward declaration for f
+f(&i); // warning: 'foo' [...] discards 'const' qualifier [...]
+    \end{codeblock}
+
+    But this is C we're talking about, so of course there's a way: 
+    \code{*(int*)&x = 3;}
+
+    Compiles no problem. \textbf{But} what happens is undefined behaviour,
+    so your progamm would no longer be valid.
+
 \end{frame}
+
+\begin{frame}[fragile]{From the west-const to the east-const}
+    \bigskip
+    Normally, a qualifier refers to the type to its \textbf{left},
+    but the following is also valid (and more common!):
+    \begin{codeblock}
+const int a;	        // equal to `int const a`
+    \end{codeblock}
+
+    Watch complex types:
+    
+    \begin{codeblock}
+const int *foo;         // mutable pointer, constant integer
+int const *foo;	        // same as above
+int * const foo;        // constant pointer, mutable integer 
+int const * const foo;  // everything constant 
+    \end{codeblock}
+    \end{frame}
+
+    \begin{frame}[fragile]{volatile}
+ \code{volatile} prevents the compiler from doing aggressive
+                optimizations on a variable. For example:
+
+        \begin{codeblock}
+volatile bool interrupt_occured = false;
+while(!interrupt_occured){
+    // we don't change interrupt_occured, so the compiler
+    // might assume that it can optimize away the check
+}
+        \end{codeblock}
+
+        This is mainly used in low-level programming:
+        \begin{itemize}
+            \item Hardware access (memory-mapped I/O)
+            \item Threading (another thread modifies a value) (\textbf{!!} be very careful here)
+        \end{itemize}
+    \end{frame}
+
+    \begin{frame}[fragile]{volatile example C}
+        
+        \begin{columns}
+        \column{.5\textwidth}
+        \begin{codeblock}
+#include <stdio.h>
+
+int main(void) {
+    int i = 42;
+    printf("%d\n", i);
+}
+        \end{codeblock}
+        \column{.5\textwidth}
+        \begin{codeblock}
+#include <stdio.h>
+
+int main(void) {
+    volatile int i = 42;
+    printf("%d\n", i);
+}
+        \end{codeblock}
+        \end{columns}
+    \end{frame}
+    \begin{frame}[fragile]{volatile example assembly}
+        After compilation with \textit{gcc -O3}:
+        \begin{columns}
+        \column{.5\textwidth}
+            \begin{small}
+            \begin{lstlisting}[escapeinside={(*}{*)}]
+.LC0:
+    .string "%d\n"
+main:
+    sub     rsp, 8
+    mov     esi, 42
+    mov     edi, OFFSET FLAT:.LC0
+    xor     eax, eax
+    call    printf
+    xor     eax, eax
+    add     rsp, 8
+    ret
+            \end{lstlisting}
+            \end{small}
+        \column{.5\textwidth}
+            \begin{small}
+            \begin{lstlisting}[escapeinside={(*}{*)}]
+.LC0:
+    .string "%d\n"
+main:
+    sub     rsp, 24
+    mov     edi, OFFSET FLAT:.LC0
+    xor     eax, eax
+    mov     DWORD PTR [rsp+12], 42
+    mov     esi, DWORD PTR [rsp+12]
+    call    printf
+    xor     eax, eax
+    add     rsp, 24
+    ret
+            \end{lstlisting}
+            \end{small}
+        \end{columns}
+        \bigskip
+        The compiler could not pass 42 to \code{printf} directly once we 
+        made \code{i} \code{volatile}.
+        \end{frame}
+
+    \begin{frame}[fragile]{restrict}
+        Restrict guarantees to the compiler that nobody else is 
+        writing to the memory of a pointer (the pointer is not aliased).
+Therefore the compiler might do an optimization like this:
+        \begin{codeblock}
+void f(char *restrict p1, char *restrict p2) {
+    for (int i = 0; i < 50; i++) {
+        p1[i] = 4;
+        p2[i] = 9;
+    }
+}
+// optimized version, only valid if p1 and p2 don't overlap
+void f(char *restrict p1, char *restrict p2) {
+    memset(p1, 4, 50);
+    memset(p2, 9, 50);
+}
+    \end{codeblock}
+
+    Since this is purely an optimization, \code{restrict} never changes the output
+    of a valid program.
+    \end{frame}
 
 \section{Parallelism}
 \subsection{}
@@ -79,6 +230,7 @@ int pthread_create(pthread_t *thread,
                    void *(*start_routine) (void *),
                    void *arg);
 \end{codeblock}
+
     where
     \begin{itemize}
             \item *\code{thread} is where the thread's id will be stored
@@ -233,4 +385,5 @@ void *thread_2(void *tid) {
 }
     \end{codeblock}
 \end{frame}
+
 \end{document}
