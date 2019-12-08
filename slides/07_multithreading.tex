@@ -32,6 +32,43 @@
 \end{frame}
 
 
+\section{Function Pointers}
+\begin{frame}[fragile]{Function Pointers}
+    \begin{itemize}
+        \item As we know, a pointer is really just a memory address
+        \item The code for functions is also in memory, so it also has an address.
+        \item As long as different functions have the same argument types, we
+        can call them using a function pointer:
+    \end{itemize}
+
+    \begin{codeblock}
+int foo(int x, int y){ puts("called foo"); }
+int foo(int x, int y){ puts("called bar"); }
+// func_ptr is the newly created function pointer 
+int (*func_ptr)(int,int);
+func_ptr = &foo; // we give it foo's address
+func_ptr(1,2); // we call foo
+func_ptr = bar; // the '&' is optional, think arrays
+func_ptr(1,2); // we call bar
+    \end{codeblock}
+
+\end{frame}
+
+
+\begin{frame}[fragile]{Function Pointer Typedefs}
+    Since the above type declaration is slighly complicated,
+    it's often a good idea to alias the function type:
+    \begin{codeblock}
+// we can give the parameters names but it's optional
+typedef int (*event_callback)(int event_id, void* context);
+
+// now we can initialize a variable like this:
+event_callback callback = &my_event_handler;
+int result = callback(1, NULL);
+    \end{codeblock}
+
+\end{frame}
+
 \section{Type Qualifiers}
 \begin{frame}[fragile]{const}
     To give more information about a variable to the compiler, you can\\
@@ -338,6 +375,7 @@ int pthread_mutex_init(pthread_mutex_t *restrict mutex,
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 \end{codeblock}
     \bigskip
+    
     A mutex is a datatype that can be locked before and unlocked after accessing a variable.
     \begin{codeblock}
 int pthread_mutex_lock(pthread_mutex_t *mutex);
