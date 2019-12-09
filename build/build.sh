@@ -25,7 +25,7 @@ function build() {
     for mdfile in ./*.md ; do
         [ -e "$mdfile" ] || continue
         filename="${mdfile%.*}"
-        if [ $build_all = true ] || file_newer "$mdfile" -nt "$DIR/$1/$filename.pdf"; then
+        if [ $build_all = true ] || file_newer "$mdfile" "$DIR/$1/$filename.pdf"; then
             echo "compiling $mdfile ..."
             pandoc "$mdfile" -o "$DIR/$1/$filename.pdf"
         fi
