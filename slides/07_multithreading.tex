@@ -43,7 +43,11 @@
 
     \begin{codeblock}
 int foo(int x, int y){ puts("called foo"); }
+<<<<<<< HEAD
 int foo(int x, int y){ puts("called bar"); }
+=======
+int bar(int x, int y){ puts("called bar"); }
+>>>>>>> master
 // func_ptr is the newly created function pointer 
 int (*func_ptr)(int,int);
 func_ptr = &foo; // we give it foo's address
