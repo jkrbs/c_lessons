@@ -27,7 +27,6 @@ Wrong answer!
 ```
 $ ./calc_game
 What is 5 + 2? You have one Second!
-12
 Too slow!
 ```
 
