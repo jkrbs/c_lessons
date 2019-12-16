@@ -313,4 +313,21 @@ int recv[from](SOCKET socket, const char *buffer, int length,
     
 \end{frame}
 
+\section{Task}
+\begin{frame}[fragile]{a simple server}
+let's write a program which listens on port \code{1337} and prints the send packet payload.
+
+the output should be like this:
+\begin{codeblock}
+[sender address]: [message]
+23.42.23.42: lame course :p
+\end{codeblock}
+\end{frame}
+\begin{frame}{send us your name}
+send us your name on a tcp connection to \code{dvorak.krbs.me(IPv4 Address: 116.203.113.16)} on port \code{1337}
+
+What you send us, will be printed on the the beamer.
+
+have a try. Our program from the last task will run there.
+\end{frame}
 \end{document}
