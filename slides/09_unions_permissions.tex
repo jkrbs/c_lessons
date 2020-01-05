@@ -105,6 +105,71 @@ g.projectile_hit_speed = 3; //we can access the members directly
 
 \section{procedural macros}
 
+\begin{frame}[fragile]{Procedural Macros}
+    So far we only talked about the simplest types of macros: 
+    \begin{codeblock}
+#define MY_CONSTANT 5
+    \end{codeblock}
+
+    But Macros can also be used like functions to and take parameters:
+    \begin{codeblock}
+#define MULT(a, b) a * b
+    \end{codeblock}
+    \begin{itemize}
+        \item Like with all macros, this is just a textual replacement.
+        \item Therefore \code{MULT(1 + 1, 2)} will yield 3,
+         not 4, as it exands to \code{1 + 1 * 2}
+        \item we can write \code{#define MULT(a, b) ((a) * (b))}
+         to avoid such problems
+        \item Why not just use a function? 
+        \begin{itemize}
+            \item C doesn't evaluate function calls
+            at compile time, which prevents using the result e.g. for array bounds. 
+            \item Macros can be used to generate boilerplate code like
+                slightly differing structs, functions or constants 
+            \item Macro arguments can be (partial) C code!
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Function like Macros}
+    When a macro contains multiple statements but is meant to be called like
+    a function with a trailing semicolon and behave as expected e.g.
+    when we do \code{if(some_cond) MY_MACRO(3);} then we need a little hack: 
+    \begin{codeblock}
+#define MY_MACRO(x) do{             \
+    foo(x);                         \
+    bar();                          \
+} while(false) //no semicolon! 
+    \end{codeblock}
+
+    \begin{itemize}
+        \item The backslashes are necessary to continue the macro line,
+            therefore no backslash is necessary on the last line
+        \item if we had just put the statements without the do block, 
+            an \code{if} would only conditionalize the first statement.
+        \item by leaving out the semicolon after the \code{while(false)} 
+            we create semantics equal to a (void) fuction call
+        \item It's not possible to 'return' a value using this trick
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Variadic Macros}
+    Macros can also take a variable amount of arguments, the so called
+    parameter pack is referenced using the special macro \code{__VA_ARGS__}
+
+    \begin{codeblock}
+#define printfln(fmt, ...) printf(fmt "\n", __VA_ARGS__)
+    \end{codeblock}
+    \begin{itemize}
+        \item parameter packs must always contain at least one argumnent,
+        otherwise we might get an error
+        \item many compilers allow it anyways or offer tricks to deal with 
+            empty parameter packs (e.g. gccs \code{##__VA_ARGS__})
+    \end{itemize}
+\end{frame}
+
 \section{unix privileges}
 
 \end{document}
