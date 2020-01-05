@@ -50,7 +50,7 @@ struct game_event{
     \begin{itemize}
         \item This struct layout wouldn't be very efficient, since
         \code{PLAYER_INTERACTION} events never need \code{projectile_hit_speed},
-        but waste memory for it anways.
+        but waste memory for it anyway.
         \item This can become a problem if we have many events or start
         to transmit events over the network in multiplayer games.
     \end{itemize} 
@@ -77,7 +77,7 @@ struct game_event{
         \item Therefore, the size of the \code{union} will 
         be equal to it's biggest member.
         \item Writing to one union member and then reading from another causes
-            undefined behaviour (Though it's quite commonly done anyways)
+            undefined behavior (Though it's quite commonly done anyways)
     \end{itemize}
 \end{frame}
 
@@ -94,7 +94,7 @@ struct game_event{
         struct {
             int projectile_damage; 
             float projectile_hit_speed; 
-        }; //struct members dont't share memory inside a union
+        }; //struct members don't share memory inside a union
     };
 };
 game_event g;
@@ -118,13 +118,13 @@ g.projectile_hit_speed = 3; //we can access the members directly
     \begin{itemize}
         \item Like with all macros, this is just a textual replacement.
         \item Therefore \code{MULT(1 + 1, 2)} will yield 3,
-         not 4, as it exands to \code{1 + 1 * 2}
+         not 4, as it expands to \code{1 + 1 * 2}
         \item we can write \code{#define MULT(a, b) ((a) * (b))}
          to avoid such problems
         \item Why not just use a function? 
         \begin{itemize}
             \item C doesn't evaluate function calls
-            at compile time, which prevents using the result e.g. for array bounds. 
+            at compile time, which prevents using the result e.g.\ for array bounds. 
             \item Macros can be used to generate boilerplate code like
                 slightly differing structs, functions or constants 
             \item Macro arguments can be (partial) C code!
@@ -149,7 +149,7 @@ g.projectile_hit_speed = 3; //we can access the members directly
         \item if we had just put the statements without the do block, 
             an \code{if} would only conditionalize the first statement.
         \item by leaving out the semicolon after the \code{while(false)} 
-            we create semantics equal to a (void) fuction call
+            we create semantics equal to a (void) function call
         \item It's not possible to 'return' a value using this trick
     \end{itemize}
 \end{frame}
@@ -163,7 +163,7 @@ g.projectile_hit_speed = 3; //we can access the members directly
 #define printfln(fmt, ...) printf(fmt "\n", __VA_ARGS__)
     \end{codeblock}
     \begin{itemize}
-        \item parameter packs must always contain at least one argumnent,
+        \item parameter packs must always contain at least one argument,
         otherwise we might get an error
         \item many compilers allow it anyways or offer tricks to deal with 
             empty parameter packs (e.g. gccs \code{##__VA_ARGS__})
@@ -171,5 +171,100 @@ g.projectile_hit_speed = 3; //we can access the members directly
 \end{frame}
 
 \section{unix privileges}
+\begin{frame}[fragile]{basics}
+In unix the file permissions can be set for the user, the group and for all users on the system.
+
+A file can be executable, readable and writable for everyone/group/user.
+
+Each user has a user id \code{uid} and each group has a group id \code{gid}.
+
+\end{frame}
+
+\begin{frame}[fragile]{permission numbers}
+
+\begin{tabular}{l|l}
+octal & permission\\
+\hline \\
+0 & \texttt{---} \\
+1 &	\texttt{--x} \\
+2 &	\texttt{-w-} \\
+3 &	\texttt{-wx} \\
+4 &	\texttt{r--} \\
+5 &	\texttt{r-x} \\
+6 &	\texttt{rw-} \\
+7 &	\texttt{rwx} \\
+\end{tabular}
+easy to calculate \code{4(r) + 1 (x) = 5 (r-x)}
+
+\begin{codeblock}
+> ls -lah
+-rw-r--r--  1 jakob jakob 2.7K Dec  7 11:49 default.php
+drwxr-xr-x  2 jakob jakob 4.0K Dec  5 13:25 dl.txrx23.de/
+-rw-------  1 root  root     5 Jan  3 08:42 extnetif.txt
+\end{codeblock}
+
+\end{frame}
+
+\begin{frame}[fragile]{setuid and setgid}
+
+With the setuid and setgid bit set the file will always be executed with the permissions
+of the owning group or the owning user.
+
+This is indicated by a \code{s} in the user or group executable position
+
+\begin{codeblock}
+~/u/c/c/src> ls -lah a.out 
+-rwsr-xr-x 1 root root 17K Jan  5 18:33 a.out*
+\end{codeblock} 
+\end{frame}
+\begin{frame}[fragile]{in c}
+\begin{codeblock}
+#include <unistd.h>
+
+uid_t getuid(void);
+uid_t getgid(void);
+
+uid_t geteuid(void);
+uid_t getegid(void);
+
+int setuid(uid_t uid);
+int setgid(uid_t uid);
+int seteuid(uid_t uid);
+int setegid(uid_t uid);
+\end{codeblock}
+
+The \code{getuid()} function shall return the real user ID  of  the  calling process.
+
+The \code{geteuid()} function shall return the effective user ID.
+
+\end{frame}
+
+\begin{frame}[fragile]{dropping privileges}
+we want to run with as little privileges as possible. So after needing privileges for starting our application, we drop as many as possible.
+
+For this we want to set the effective user id of our program to a uid with less privileges
+
+\begin{codeblock}
+if (setegid(target_groupid) != 0)
+    //err
+if (seteuid(target_userid) != 0)
+    //err
+\end{codeblock}
+
+\end{frame}
+
+\section{project}
+
+\begin{frame}{project}
+    We are finished with the content, which is appropriate for a c course. 
+So we thought it would be time for a more challenging task.
+\begin{itemize}
+    \item Do you want to work on the project as a group?
+    \item Do you have ideas on a small game we could write?
+    \item Shall it be a game or something different?
+    \item Should we have small blocks of content at the beginning of the next lessons?
+\end{itemize}
+Our proposal is a multiplayer rouge-like game. (basically a small ascii dungeon in which two people have to fight monsters)
+\end{frame}
 
 \end{document}
