@@ -32,6 +32,76 @@
 \end{frame}
 
 \section{unions}
+\begin{frame}[fragile]{Why do we need Unions?}
+    Suppose you have a struct representing one of different kinds of 
+    events in an game:
+    \begin{codeblock}
+struct game_event{
+    enum event_kind {
+        PLAYER_INTERACTION, PROJECTILE_HIT //...
+    } kind;
+    // only used by PLAYER_INTERACTION events   
+    enum button_kind button; 
+    // only used by PROJECTILE_HIT events
+    float projectile_hit_speed; 
+};
+    \end{codeblock}
+
+    \begin{itemize}
+        \item This struct layout wouldn't be very efficient, since
+        \code{PLAYER_INTERACTION} events never need \code{projectile_hit_speed},
+        but waste memory for it anways.
+        \item This can become a problem if we have many events or start
+        to transmit events over the network in multiplayer games.
+    \end{itemize} 
+ 
+\end{frame}
+
+\begin{frame}[fragile]{How can we save memory using unions?}
+    We can tell C that we only need one of a list of fields at a 
+    time using \code{unions}.
+
+    \begin{codeblock}
+struct game_event{
+    enum event_kind {PLAYER_INTERACTION, PROJECTILE_HIT} kind;
+    union {
+        enum button_kind button;    
+        float projectile_hit_speed; 
+    } payload;
+};
+    \end{codeblock}
+    \begin{itemize}
+        \item Syntactically, a union behaves a lot like a struct.
+        \item But, C will use the same memory block for all members
+        of the \code{union}
+        \item Therefore, the size of the \code{union} will 
+        be equal to it's biggest member.
+        \item Writing to one union member and then reading from another causes
+            undefined behaviour (Though it's quite commonly done anyways)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Anonymous Unions}
+    Sometimes we just want to share memory without giving a name to the 
+    created substructure. For this, \code{C11} (2011) introduced / standardized 
+    anonymous unions and structs:
+
+    \begin{codeblock}
+struct game_event{
+    enum event_kind {PLAYER_INTERACTION, PROJECTILE_HIT} kind;
+    union {
+        enum button_kind button;    
+        struct {
+            int projectile_damage; 
+            float projectile_hit_speed; 
+        }; //struct members dont't share memory inside a union
+    };
+};
+game_event g;
+g.projectile_hit_speed = 3; //we can access the members directly
+    \end{codeblock}
+\end{frame}
+
 
 \section{procedural macros}
 
