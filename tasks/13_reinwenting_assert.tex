@@ -1,0 +1,33 @@
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usetheme{metropolis}
+\begin{document}
+\begin{frame}[fragile]{Task 13: reinventing assert}
+Create A C macro that behaves just like \code{assert} from \code{<assert.h>}:
+\begin{itemize}
+    \item  \code{assert(1 == 2);} $\Rightarrow$ 
+        \code{test.c:3: main: Assertion '1 == 2'  failed.} 
+        is printed on stderr, the program aborts
+    \item \code{assert(1);} $\Rightarrow$  no output, everything is fine
+\end{itemize}
+
+Some Tips:
+\begin{itemize}
+    \item The special macros \code{__FILE__} , \code{__LINE__} and \code{__FUNCTION__}
+        can give you information about the current location in the source code
+    \item You can use \code{abort();} 
+        (\code{#include <stdlib.h>}) to abort the program
+    \item You can use \code{#macro_param} to turn the macro parameter into a string
+\end{itemize}
+    
+
+\end{frame}
+
+\begin{frame}[fragile]{Some More Tipps}
+\begin{itemize}
+    \item Remember that we can print on stderr using 
+        \code{fprintf(stderr, "foo: \%s", "bar");}  (\code{#include <stdio.h>})
+    \item We can use the \code{do \{ \} while(false)} trick to make the macro safer
+\end{itemize}
+\end{frame}
+\end{document}
