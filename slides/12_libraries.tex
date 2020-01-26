@@ -1,0 +1,187 @@
+% document
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+% theme
+\usetikzlibrary{arrows}
+\tikzstyle{line}=[draw] % here
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{arrow/.style={-latex, shorten >=.5ex, shorten <=.5ex}}
+
+\usetheme{metropolis}
+% packages
+\title{Lesson 12}
+\author{Christian Schwarz, Jakob Krebs}
+\date{27.1.2020}
+\begin{document}
+\maketitle
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+
+
+\section{Libraries}
+
+\subsection{Static Libraries}
+\begin{frame}{Static Libraries}
+    \begin{itemize}
+        \item Compilation is hard, and can take a long time. 
+            The compiler needs to do a lot of work to get 
+            from C code to an executable binary.
+        \item When our Project becomes large, or if we are using a lot of existing
+            code, we might not want to recompile everything every time we build.
+        \item For example: We commonly use the C Standard Library in our programm,
+             but we never actually change it.
+        \item How can we avoid uneccessary recompilation?
+    \end{itemize}
+    \end{frame}
+
+\begin{frame}{Static Libraries}
+    \begin{itemize}
+        \item Remember that compilation involved multiple steps:
+        \begin{enumerate}
+            \item Preprocessing
+            \item Compiling
+            \item (Assembling)
+            \item Linking
+        \end{itemize}
+        \item Steps 1-3 run for every file. The output doesn't change, unless
+            the C file (or the included headers) change.
+        \item So should we just link all the .o / .obj files of libc and other
+            dependencies every time? Doesn't that get annoying?
+        \item GNU/Linux allows us to bundle multiple .o files into a bundle 
+            (think .zip) called an archive (.a)
+        \item On Windows multiple .obj's can be bundled into a .LIB file
+        \item We call both .a and .LIB static libraries, since they define
+            a bunch of functions (and global variables) that we can use 
+            in our applications. 
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Creating a Static Library}
+    \begin{codeblock}
+//hello.c
+#include <stdio.h>
+void hello_can_you_hear_me(void){
+    puts("Hello from the other side!");
+}
+    \end{codeblock}
+    \begin{lstlisting}
+$ gcc -c hello.c 
+$ ar rcs libhello.a hello.o     
+    \end{lstlisting}
+    \begin{itemize}
+        \item \code{-c} makes gcc stop after the compilation step and generate
+            object files instead of an executable
+        \item  the ar utility (with the parameters rcs) creates our archive
+        \item we could have appended multiple files for both programs 
+        \item prefixing libraries with \code{"lib"} is a typical linux convention
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]{Using a Static Library}
+    \begin{codeblock}
+//main.c
+void hello_can_you_hear_me(void); //forward declaration
+int main(){
+    hello_can_you_hear_me();
+    return 0;
+}
+    \end{codeblock}
+    \begin{lstlisting}
+$ gcc main.c test.a 
+$ ./a.out
+Hello from the other side!
+$
+    \end{lstlisting}
+\end{frame}
+
+\subsection{Dynamic Libraries}
+\begin{frame}{Dynamic Libraries}
+    \begin{itemize}
+        \item In a normal Desktop Operating System,
+            many processes run at the same time.
+        \item For every Process, the OS loads the code inside the executable
+            into main memory.
+        \item If one executable is launched multiple times, the physical memory
+            for the code can be shared.
+        \item But if all Libraries were statically linked into the executables,
+            commonly used libraries like \code{libc} would end up being stored 
+            in RAM many times, creating a lot of redundancy. 
+    \end{itemize}
+    \bigskip
+    \begin{itemize}
+        \item Also, when the Code for a library gets updates (bugfixes, 
+            performance improvements, etc.), all executables (and libraries)
+            depending on that library would need to be recompiled and redistributed
+            to the users.
+        \item And by the way, how do you create optional modules / plugins?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Dynamic Libraries}
+    \begin{itemize}
+        \item Dynamic libraries are completely different from static libraries,
+            in that they get loaded during runtime of the program.
+        \item The Application specifies the name of the dnymic libraries 
+            its wants to use, and during runtime these symbols get loaded by searching
+            for files with the specied names and searching the requested symbols in them.  
+    \end{itemize}
+    \bigskip
+    \begin{codeblock}
+#include <dlfcn.h>
+int main(){ 
+    void *dl_handle = dlopen ("libm.so", RTLD_LAZY);
+    double (*cosine)(double);
+    cosine = dlsym(dl_handle, "cos");
+    printf ("%f\n", (*cosine)(2.0));
+    dlclose(handle);
+}
+    \end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{Dynamic Libraries}
+    \begin{lstlisting}
+$ gcc -shared test.c -o libtest.so 
+$ gcc main.c -L . -l test
+$ export LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH
+$./a.out
+Hello from the other side!
+$
+    \end{lstlisting}
+    \begin{itemize}
+        \item \code{-shared} requests building a shared library
+        \item \code{-L} adds a directory to search for libraries (at compile time)
+        \item \code{-l} adds a library name to search for (also later used at runtime)
+        \item we must omit the leading \code{"lib"} so our library will be found
+        \item \code{LD_LIBRARY_PATH} is an environment variable for adding
+            additional directories that are searched for dynamic libraries
+            (ld is the dynamic linker)
+        \item we must add \code{"."} so the current directory is searched
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Dynamic Libraries Trivia}
+\begin{itemize}
+    \item another useful variable is \code{LD_PRELOAD}, which allows us to
+    preload arbitrary libraries and therefore symbols for our executable
+    (e.g. used by strace, can have security implications)
+
+    \item Windows works a bit different here, you have to specify the functions 
+        which you want to export for the dynamic library by prepending 
+        \code{__declspec(dllexport)} to every function,
+        and forward declare them them with \code{__declspec(dllimport)}
+    \item this is usually done using a macro like \code{DLL_EXPORT} in header files
+        which changes meaning based on pp directives 
+        (e.g. expands to nothing on Unix)
+    \item Windows also requires you to link a static wrapper library to your application
+        for all DLLs. This wrapper .LIB gets automatically created when the DLL is compiled
+    \item On the upside, windows automatically searches for DLLS in the application's directory 
+\end{itemize}
+\end{frame}
+\end{document}
