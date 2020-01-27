@@ -15,7 +15,6 @@ typedef enum collision_type {COLLISION_NONE, COLLSION_BLOCK, COLLISION_BOTTOM, C
 } collision_type;
 
 
-//TODO add missing blocks
 char* block_symbols[BLOCK_COUNT][4][4] = {
     [BLOCK_L1] = {
         {"#   ", "### ", "    ", "    "},
@@ -72,6 +71,7 @@ struct gamestate {
     char board[BOARD_WIDTH][BOARD_HEIGHT];
     //TODO Block quene
     block cur_block;
+    int score;
 } gamestate;
 
 //returns true on collision
@@ -141,10 +141,10 @@ void move(int x, int y, int rot) {
 
 void render_board() {
     termio_clear_screen();
-
     for(int i = 0; i< BOARD_WIDTH+2; i++) {
         putchar('@');
     }
+    printf("    score: %d", gamestate.score);
     putchar('\n');
 
     for(int y = 0; y < BOARD_HEIGHT; y++) {
@@ -199,7 +199,7 @@ void gametick() {
                     for(int x = 0; x< BOARD_WIDTH; x++) {
                         gamestate.board[x][0] = ' ';
                     }
-                
+                    gamestate.score += 100;
                 }
             }
 
