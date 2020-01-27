@@ -2,27 +2,59 @@
 #include "termio.h"
 #include <stdlib.h>
 #include <unistd.h>
-#define BOARD_WIDTH  10
+#define BOARD_WIDTH  30
 #define BOARD_HEIGHT 24 
 
 
 enum block_type {
-    BLOCK_L1, BLOCK_L2, BLOCK_Z1, BLOCK_Z2, BLOCK_I, BLOCK_T, BLOCK_Q, BLOCK_COUNT, NONE
+    BLOCK_L1, BLOCK_L2, BLOCK_Z1, BLOCK_Z2, BLOCK_I, BLOCK_T, BLOCK_Q, BLOCK_COUNT, BLOCK_NONE
 };
 
 
 //TODO add missing blocks
 char* block_symbols[BLOCK_COUNT][4][4] = {
-[BLOCK_I] = {{"    ", "    ", "IIII", "    "}, 
-             {"  I ", "  I ", "  I ", "  I "}, 
-             {"    ", "    ", "IIII", "    "}, 
-             {"  I ", "  I ", "  I ", "  I "}},
-[BLOCK_L1] = {"IIII", "    "},
-[BLOCK_L2] = {"IIII", "    "},
-[BLOCK_Z1] = {"IIII", "    "},
-[BLOCK_Z2] = {"IIII", "    "},
-[BLOCK_T] = {"IIII", "    "},
-[BLOCK_Q] = {"IIII", "    "}
+    [BLOCK_L1] = {
+        {"#   ", "### ", "    ", "    "},
+        {" ## ", " #  ", " #  ", "    "},
+        {"    ", "### ", "  # ", "    "},
+        {" #  ", " #  ", "##  ", "    "},
+    },
+    [BLOCK_L2] = {
+        {"  # ", "### ", "    ", "    "},
+        {" #  ", " #  ", " ## ", "    "},
+        {"    ", "### ", "#   ", "    "},
+        {"##  ", " #  ", " #  ", "    "},
+    },
+    [BLOCK_Z1] = {
+        {" ## ", "##  ", "    ", "    "},
+        {" #  ", " ## ", "  # ", "    "},
+        {"    ", " ## ", "##  ", "    "},
+        {"#   ", "##  ", " #  ", "    "},
+    },
+    [BLOCK_Z2] = {
+        {"##  ", " ## ", "    ", "    "},
+        {"  # ", " ## ", " #  ", "    "},
+        {"    ", "##  ", " ## ", "    "},
+        {" #  ", "##  ", "#   ", "    "},
+    },
+    [BLOCK_I] = {
+        {"    ", "####", "    ", "    "},
+        {" #  ", " #  ", " #  ", " #  "},
+        {"    ", "####", "    ", "    "},
+        {"  # ", "  # ", "  # ", "  # "},
+    },
+    [BLOCK_T] = {
+        {" #  ", "### ", "    ", "    "},
+        {" #  ", " ## ", " #  ", "    "},
+        {"    ", "### ", " #  ", "    "},
+        {" #  ", "##  ", " #  ", "    "},
+    },
+    [BLOCK_Q] = {
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+    },
 };
 
 
