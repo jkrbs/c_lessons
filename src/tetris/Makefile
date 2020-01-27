@@ -9,10 +9,10 @@ SRC := src/tetris.c src/termio.c
 all: debug
 
 debug: 
-	$(CC) $(CFLAGS) $(DFLAGS) -o $(TARGET)/$(NAME)_dbg $(SRC)
+	$(CC) $(CFLAGS) $(DFLAGS) -o $(TARGET)/$(NAME) $(SRC)
 
 release: 
-	$(CC) $(CFLAGS) $(RFLAGS) -o $(TARGET)/$(NAME)_rls $(SRC)
+	$(CC) $(CFLAGS) $(RFLAGS) -o $(TARGET)/$(NAME) $(SRC)
 
 clean: 
 	rm $(TARGET)/*
