@@ -172,9 +172,7 @@ void init_board(){
 }
 
 
-void gametick() {
-    move(0, 1, 0);    
-
+void gametick() {   
     char input;
 
     while(true){
@@ -245,9 +243,13 @@ int main() {
     init_board();
     while (true)
     {
-        gametick();
-        render_board();
-        usleep(300000);
+        move(0, 1, 0); 
+        for(int i = 0; i<10;i++){
+            gametick();
+            render_board();
+            usleep(30000);
+        }
+       
     }
 
     termio_fin();
