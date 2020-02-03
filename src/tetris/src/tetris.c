@@ -1,155 +1,253 @@
 #include<stdio.h>
 #include "termio.h"
 #include <stdlib.h>
+#include <assert.h>
 #include <unistd.h>
 #define BOARD_WIDTH  10
-#define BOARD_HEIGHT 24 
+#define BOARD_HEIGHT 20 
 
 
 enum block_type {
-    BLOCK_L1, BLOCK_L2, BLOCK_Z1, BLOCK_Z2, BLOCK_I, BLOCK_T, BLOCK_Q, BLOCK_COUNT, NONE
+    BLOCK_L1, BLOCK_L2, BLOCK_Z1, BLOCK_Z2, BLOCK_I, BLOCK_T, BLOCK_Q, BLOCK_COUNT, BLOCK_NONE
 };
 
+typedef enum collision_type {COLLISION_NONE, COLLSION_BLOCK, COLLISION_BOTTOM, COLLISION_BORDER
+} collision_type;
 
-//TODO add missing blocks
+
 char* block_symbols[BLOCK_COUNT][4][4] = {
-[BLOCK_I] = {{"    ", "    ", "IIII", "    "}, 
-             {"  I ", "  I ", "  I ", "  I "}, 
-             {"    ", "    ", "IIII", "    "}, 
-             {"  I ", "  I ", "  I ", "  I "}},
-[BLOCK_L1] = {"IIII", "    "},
-[BLOCK_L2] = {"IIII", "    "},
-[BLOCK_Z1] = {"IIII", "    "},
-[BLOCK_Z2] = {"IIII", "    "},
-[BLOCK_T] = {"IIII", "    "},
-[BLOCK_Q] = {"IIII", "    "}
+    [BLOCK_L1] = {
+        {"#   ", "### ", "    ", "    "},
+        {" ## ", " #  ", " #  ", "    "},
+        {"    ", "### ", "  # ", "    "},
+        {" #  ", " #  ", "##  ", "    "},
+    },
+    [BLOCK_L2] = {
+        {"  # ", "### ", "    ", "    "},
+        {" #  ", " #  ", " ## ", "    "},
+        {"    ", "### ", "#   ", "    "},
+        {"##  ", " #  ", " #  ", "    "},
+    },
+    [BLOCK_Z1] = {
+        {" ## ", "##  ", "    ", "    "},
+        {" #  ", " ## ", "  # ", "    "},
+        {"    ", " ## ", "##  ", "    "},
+        {"#   ", "##  ", " #  ", "    "},
+    },
+    [BLOCK_Z2] = {
+        {"##  ", " ## ", "    ", "    "},
+        {"  # ", " ## ", " #  ", "    "},
+        {"    ", "##  ", " ## ", "    "},
+        {" #  ", "##  ", "#   ", "    "},
+    },
+    [BLOCK_I] = {
+        {"    ", "####", "    ", "    "},
+        {" #  ", " #  ", " #  ", " #  "},
+        {"    ", "####", "    ", "    "},
+        {"  # ", "  # ", "  # ", "  # "},
+    },
+    [BLOCK_T] = {
+        {" #  ", "### ", "    ", "    "},
+        {" #  ", " ## ", " #  ", "    "},
+        {"    ", "### ", " #  ", "    "},
+        {" #  ", "##  ", " #  ", "    "},
+    },
+    [BLOCK_Q] = {
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+        {"    ", " ## ", " ## ", "    "},
+    },
 };
 
 
 typedef struct block {
-        enum block_type kind;
-        int rotation;
-        int x, y;
+    enum block_type kind;
+    int rotation;
+    int x, y;
 } block;
 
-struct board {
-    char grid[BOARD_WIDTH][BOARD_HEIGHT];
-};
-
 struct gamestate {
-    struct board board;
+    char board[BOARD_WIDTH][BOARD_HEIGHT];
     //TODO Block quene
     block cur_block;
+    int score;
 } gamestate;
 
 //returns true on collision
-bool char_insert(int x, int y, char ic, bool del) {
-    if(x<0 || x>=BOARD_WIDTH || y>= BOARD_HEIGHT || y < 0) {
-        if(del) return false;
-        return ic != ' ';
+collision_type char_insert(int xoffset, int yoffset, bool del) {
+    int x = gamestate.cur_block.x + xoffset;
+    int y = gamestate.cur_block.y + yoffset;
+    char bc = block_symbols[gamestate.cur_block.kind][gamestate.cur_block.rotation][yoffset][xoffset];
+
+    if(x<0 || x>=BOARD_WIDTH || y < 0) {
+        return bc != ' ' ? COLLISION_BORDER : COLLISION_NONE;
     }
 
-    if(!del && gamestate.board.grid[x][y] != ' ') return true;
-    gamestate.board.grid[x][y] = del?' ':ic;
-    return false;
+    if( y>= BOARD_HEIGHT) {
+        return bc != ' ' ? COLLISION_BOTTOM : COLLISION_NONE;
+    }
+    
+    if(gamestate.board[x][y] == ' '){
+        if(!del) gamestate.board[x][y] = bc;
+        return COLLISION_NONE;
+    }
+    if(del){
+        if(bc != ' ') gamestate.board[x][y] = ' ';
+        return COLLISION_NONE;
+    }
+    return bc != ' ' ? COLLSION_BLOCK : COLLISION_NONE;
 }
 
-bool block_insert(bool del) {
-    bool collission = false;
-    int x = gamestate.cur_block.x;
-    int y = gamestate.cur_block.y;
-    
+collision_type block_insert(bool del) {
+ 
     enum block_type kind = gamestate.cur_block.kind;
-
 
     for(int i = 0; i<4; i++) {
         for(int j =0; j<4; j++) {
-            collission = char_insert(x+i, y+j, block_symbols[BLOCK_I][gamestate.cur_block.rotation][j][i], del);
-            if(collission) return collission;
+            collision_type ct = char_insert(i, j, del);
+            if(ct){
+                assert(!del);
+                for(int k = 0; k < i; k++){
+                    for(int l = 0; l <  4; l++) char_insert(k, l, true);
+                }
+                for(int l = 0; l < j; l++) char_insert(i, l, true);
+                return ct;
+            }
         }
     }
-    return false;
+    return COLLISION_NONE;
 }
 
+void move(int x, int y, int rot) {
+    block_insert(true);
+    int rot_prev = gamestate.cur_block.rotation;
+    gamestate.cur_block.x += x;
+    gamestate.cur_block.y += y;
+    gamestate.cur_block.rotation = (gamestate.cur_block.rotation + 4 + rot) % 4;
+    
+    collision_type ct =block_insert(false);
+    
+    if(ct) {
+        gamestate.cur_block.x -= x;
+        gamestate.cur_block.y -= y;
+        gamestate.cur_block.rotation = rot_prev;
+        block_insert(false);
+        if(ct == COLLSION_BLOCK || ct == COLLISION_BOTTOM) {
+            gamestate.cur_block.kind = BLOCK_NONE;
+        }
+    }
+}
 
 void render_board() {
     termio_clear_screen();
+    for(int i = 0; i< BOARD_WIDTH+2; i++) {
+        putchar('@');
+    }
+    printf("    score: %d", gamestate.score);
+    putchar('\n');
 
     for(int y = 0; y < BOARD_HEIGHT; y++) {
+        putchar('@');
         for(int x = 0; x < BOARD_WIDTH; x++) {
-            putchar(gamestate.board.grid[x][y]);
+            putchar(gamestate.board[x][y]);
         }
-        putchar('\n');
+        puts("@");
     }
-    block_insert(true);
+
+    for(int i = 0; i< BOARD_WIDTH+2; i++) {
+        putchar('@');
+    }
+    putchar('\n');
 }
 
-void move(int x, int y) {
-    gamestate.cur_block.x += x;
-    gamestate.cur_block.y += y;
-    if(block_insert(false)) {
-        block_insert(true);
-        gamestate.cur_block.x -= x;
-        gamestate.cur_block.y -= y;
-        block_insert(false);
-        gamestate.cur_block.kind = NONE;
+
+
+void init_board(){
+    for(int x = 0; x<BOARD_WIDTH; x++){
+        for(int y = 0; y<BOARD_HEIGHT; y++){
+            gamestate.board[x][y] = ' ';
+        }
     }
 }
 
 
 void gametick() {
-    move(0,1);    
-    if(gamestate.cur_block.kind == NONE) {
-        gamestate.cur_block.kind=rand() % BLOCK_COUNT;
-
-        gamestate.cur_block.y = 0;
-        gamestate.cur_block.x = BOARD_WIDTH/2;
-
-        gamestate.cur_block.rotation = rand() % 4;
-    }
-
+    move(0, 1, 0);    
 
     char input;
 
-    while(termio_getch(&input)) {
+    while(true){
+        if(gamestate.cur_block.kind == BLOCK_NONE) {
+
+            for(int y = 0; y < BOARD_HEIGHT; y++) {
+                bool line_full = true;
+                for(int x = 0; x < BOARD_WIDTH; x++) {
+                    if(gamestate.board[x][y] == ' ') {
+                        line_full = false;
+                        break;
+                    }
+                }
+                if(line_full) {
+                    int line_y = y;
+                    for(int x = 0; x < BOARD_WIDTH; x++) {
+                        //memmove(&gamestate.board[x][y], &gamestate.board[x][y+1], sizeof(char)*y);
+                        for(int y = line_y; y >= 1; y--) {
+                            gamestate.board[x][y] = gamestate.board[x][y-1];
+                        }
+                    }
+                    for(int x = 0; x< BOARD_WIDTH; x++) {
+                        gamestate.board[x][0] = ' ';
+                    }
+                    gamestate.score += 100;
+                }
+            }
+
+
+            gamestate.cur_block.kind= rand() % BLOCK_COUNT;
+            gamestate.cur_block.kind = BLOCK_I; //debug
+            gamestate.cur_block.y = 0;
+            gamestate.cur_block.x = BOARD_WIDTH/2;
+
+            gamestate.cur_block.rotation = rand() % 4;
+            block_insert(false);
+        }
+        if(!termio_getch(&input))break;
         switch(input) {
             case 'a':
-                if(gamestate.cur_block.x == 0) break;
-                gamestate.cur_block.x--;//TODO collission check
+                move(-1, 0, 0);
                 break;
             
             case 's':
-                if(gamestate.cur_block.y == BOARD_HEIGHT-1) break;
-                gamestate.cur_block.y++; //TODO collission check
+                move(0, 1, 0);
                 break;
 
             case 'd':
-                if(gamestate.cur_block.x == BOARD_WIDTH-1) break;
-                gamestate.cur_block.x++;//TODO collission check
+                move(1, 0, 0);
                 break;
 
             case 'q':
-                gamestate.cur_block.rotation = (gamestate.cur_block.rotation +1) % 4;
+                 move(0, 0, 1);
                 break;
 
             case 'e':
-                gamestate.cur_block.rotation = (gamestate.cur_block.rotation +3) % 4;
+                 move(0, 0, -1);
                 break;
-        }
+        } 
     }
 
 }
 
 
 int main() {
-
+    
     termio_init();
-
+    init_board();
     while (true)
     {
         gametick();
         render_board();
-        usleep(50000);
+        usleep(300000);
     }
 
     termio_fin();
