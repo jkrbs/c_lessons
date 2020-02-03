@@ -1,0 +1,113 @@
+% document
+\documentclass[10pt,graphics,aspectratio=169,table]{beamer}
+\usepackage{../code}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+% theme
+\usetikzlibrary{arrows}
+\tikzstyle{line}=[draw] % here
+\usetikzlibrary{decorations.pathmorphing}
+\tikzset{arrow/.style={-latex, shorten >=.5ex, shorten <=.5ex}}
+
+\usetheme{metropolis}
+% packages
+\title{Lesson 13}
+\author{Christian Schwarz, Jakob Krebs}
+\date{03.02.2020}
+\begin{document}
+\maketitle
+
+\begin{frame}{Contents}
+    \tableofcontents
+\end{frame}
+\section{Valgrind}
+\begin{frame}[fragile]{Motivation}
+We want to find memory related bugs, like
+
+\begin{itemize}
+\item uninitialized values
+\item double free
+\item invalid reads
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{usage}
+\begin{codeblock}
+valgrind name_of_binary
+\end{codeblock}\\
+You want to build the binary with \code{-g}, to have line numbers in the valgrind output
+\end{frame}
+
+\subsection{example outputs for different bugs}
+
+\begin{frame}[fragile]{uninitialized values}
+code:
+\begin{codeblock}
+int a;
+
+if (a == 23) bla();
+\end{codeblock}
+
+valgrind output:
+
+\begin{codeblock}
+Conditional jump or move depends on uninitialised value(s)
+   at 0x48D955D: _itoa_word (in /usr/lib/libc-2.30.so)
+   by 0x48F313B: __vfprintf_internal (in /usr/lib/libc-2.30.so)
+   by 0x48DF26E: printf (in /usr/lib/libc-2.30.so)
+   by 0x1091E7: main (in /pathToCode/a.out)
+ Uninitialised value was created by a stack allocation
+   at 0x109169: main (in /pathToCode/a.out)
+\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{double free}
+code:
+\begin{codeblock}
+free(a);
+free(a);
+\end{codeblock}
+
+valgrind output:
+
+\begin{codeblock}
+Invalid free() / delete / delete[] / realloc()
+   at 0x48399AB: free (vg_replace_malloc.c:540)
+   by 0x10922F: main (in /pathToCode/a.out)
+ Address 0x1fff000980 is on thread 1's stack
+ in frame #1, created by main (???:)
+\end{codeblock}
+\end{frame}
+
+\begin{frame}[fragile]{invalid reads}
+code:
+\begin{codeblock}
+free(a);
+bla = a->myptr;
+\end{codeblock}
+
+valgrind output:
+
+\begin{codeblock}
+Invalid read of size 8
+   at 0x109234: main (in /pathToCode/a.out)
+ Address 0x4a52048 is 8 bytes inside a block of size 16 free'd
+   at 0x48399AB: free (vg_replace_malloc.c:540)
+   by 0x10922F: main (in /pathToCode/a.out)
+ Block was alloc'd at
+   at 0x483877F: malloc (vg_replace_malloc.c:309)
+   by 0x10919A: main (in /pathToCode/a.out)
+\end{codeblock}
+\end{frame}
+\section{Tetris}
+\begin{frame}{What's missing?}
+\begin{itemize}
+\item farben
+\item scoring
+\item game over
+\end{itemize}
+\end{frame}
+\section{Questions}
+\end{document}
