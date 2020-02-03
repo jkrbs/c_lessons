@@ -14,5 +14,9 @@ debug:
 release: 
 	$(CC) $(CFLAGS) $(RFLAGS) -o $(TARGET)/$(NAME) $(SRC)
 
+run: 
+	$(CC) $(CFLAGS) $(RFLAGS) -o $(TARGET)/$(NAME) $(SRC)
+	$(TARGET)/$(NAME)
+
 clean: 
 	rm $(TARGET)/*
