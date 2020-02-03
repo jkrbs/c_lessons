@@ -8,55 +8,74 @@
 
 
 enum block_type {
-    BLOCK_L1, BLOCK_L2, BLOCK_Z1, BLOCK_Z2, BLOCK_I, BLOCK_T, BLOCK_Q, BLOCK_COUNT, BLOCK_NONE
+    BLOCK_J, BLOCK_L, BLOCK_S, BLOCK_Z, BLOCK_I, BLOCK_T, BLOCK_O, BLOCK_COUNT, BLOCK_NONE
 };
 
 typedef enum collision_type {COLLISION_NONE, COLLSION_BLOCK, COLLISION_BOTTOM, COLLISION_BORDER
 } collision_type;
 
+#define ANSI_COLOR_GREEN "\033[0;32m"
+#define ANSI_COLOR_CYAN "\033[0;36m"
+#define ANSI_COLOR_RED "\033[0;31m"
+#define ANSI_COLOR_ORANGE "\033[38;2;255;165;0m"
+#define ANSI_COLOR_YELLOW "\033[0;33m"
+#define ANSI_COLOR_PURPLE "\033[0;35m"
+#define ANSI_COLOR_BLUE "\033[0;34m"
+#define ANSI_COLOR_CLEAR "\033[0m"
+
+char* char_colors[255] = {
+    ['Z'] = ANSI_COLOR_RED,
+    ['S'] = ANSI_COLOR_GREEN,
+    ['T'] = ANSI_COLOR_PURPLE,
+    ['O'] = ANSI_COLOR_YELLOW,
+    ['L'] = ANSI_COLOR_ORANGE,
+    ['J'] = ANSI_COLOR_BLUE,
+    ['I'] = ANSI_COLOR_CYAN,
+    [' '] = ANSI_COLOR_CLEAR,
+};
 
 char* block_symbols[BLOCK_COUNT][4][4] = {
-    [BLOCK_L1] = {
-        {"#   ", "### ", "    ", "    "},
-        {" ## ", " #  ", " #  ", "    "},
-        {"    ", "### ", "  # ", "    "},
-        {" #  ", " #  ", "##  ", "    "},
+    [BLOCK_J] = {
+        {"J   ", "JJJ ", "    ", "    "},
+        {" JJ ", " J  ", " J  ", "    "},
+        {"    ", "JJJ ", "  J ", "    "},
+        {" J  ", " J  ", "JJ  ", "    "},
     },
-    [BLOCK_L2] = {
-        {"  # ", "### ", "    ", "    "},
-        {" #  ", " #  ", " ## ", "    "},
-        {"    ", "### ", "#   ", "    "},
-        {"##  ", " #  ", " #  ", "    "},
+    [BLOCK_L] = {
+        {"  L ", "LLL ", "    ", "    "},
+        {" L  ", " L  ", " LL ", "    "},
+        {"    ", "LLL ", "L   ", "    "},
+        {"LL  ", " L  ", " L  ", "    "},
     },
-    [BLOCK_Z1] = {
-        {" ## ", "##  ", "    ", "    "},
-        {" #  ", " ## ", "  # ", "    "},
-        {"    ", " ## ", "##  ", "    "},
-        {"#   ", "##  ", " #  ", "    "},
+    [BLOCK_S] = {
+        {" SS ", "SS  ", "    ", "    "},
+        {" S  ", " SS ", "  S ", "    "},
+        {"    ", " SS ", "SS  ", "    "},
+        {"S   ", "SS  ", " S  ", "    "},
     },
-    [BLOCK_Z2] = {
-        {"##  ", " ## ", "    ", "    "},
-        {"  # ", " ## ", " #  ", "    "},
-        {"    ", "##  ", " ## ", "    "},
-        {" #  ", "##  ", "#   ", "    "},
+    [BLOCK_Z] = {
+        {"ZZ  ", " ZZ ", "    ", "    "},
+        {"  Z ", " ZZ ", " Z  ", "    "},
+        {"    ", "ZZ  ", " ZZ ", "    "},
+        {" Z  ", "ZZ  ", "Z   ", "    "},
     },
     [BLOCK_I] = {
-        {"    ", "####", "    ", "    "},
-        {" #  ", " #  ", " #  ", " #  "},
-        {"    ", "####", "    ", "    "},
-        {"  # ", "  # ", "  # ", "  # "},
+        {"    ", "IIII", "    ", "    "},
+        {" I  ", " I  ", " I  ", " I  "},
+        {"    ", "IIII", "    ", "    "},
+        {"  I ", "  I ", "  I ", "  I "},
     },
     [BLOCK_T] = {
-        {" #  ", "### ", "    ", "    "},
-        {" #  ", " ## ", " #  ", "    "},
-        {"    ", "### ", " #  ", "    "},
-        {" #  ", "##  ", " #  ", "    "},
+        {" T  ", "TTT ", "    ", "    "},
+        {" T  ", " TT ", " T  ", "    "},
+        {"    ", "TTT ", " T  ", "    "},
+        {" T  ", "TT  ", " T  ", "    "},
     },
-    [BLOCK_Q] = {
-        {"    ", " ## ", " ## ", "    "},
-        {"    ", " ## ", " ## ", "    "},
-        {"    ", " ## ", " ## ", "    "},
-        {"    ", " ## ", " ## ", "    "},
+    [BLOCK_O] = {
+        {"    ", " OO ", " OO ", "    "},
+        {"    ", " OO ", " OO ", "    "},
+        {"    ", " OO ", " OO ", "    "},
+        {"    ", " OO ", " OO ", "    "},
     },
 };
 
@@ -148,8 +167,11 @@ void render_board() {
     for(int y = 0; y < BOARD_HEIGHT; y++) {
         putchar('@');
         for(int x = 0; x < BOARD_WIDTH; x++) {
-            putchar(gamestate.board[x][y]);
+            char c = gamestate.board[x][y];
+            fputs(char_colors[c], stdout);
+            putchar(c);
         }
+        fputs(ANSI_COLOR_CLEAR, stdout);
         puts("@");
     }
 
@@ -201,7 +223,6 @@ void gametick() {
 
 
             gamestate.cur_block.kind= rand() % BLOCK_COUNT;
-            gamestate.cur_block.kind = BLOCK_I; //debug
             gamestate.cur_block.y = 0;
             gamestate.cur_block.x = BOARD_WIDTH/2;
 
