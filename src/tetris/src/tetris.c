@@ -119,23 +119,21 @@ collision_type block_insert(bool del) {
     return COLLISION_NONE;
 }
 
-void move(int x, int y, int rot) {
+void move(int x, int y, int rot, bool freeze_on_coll) {
     block_insert(true);
     int rot_prev = gamestate.cur_block.rotation;
     gamestate.cur_block.x += x;
     gamestate.cur_block.y += y;
     gamestate.cur_block.rotation = (gamestate.cur_block.rotation + 4 + rot) % 4;
     
-    collision_type ct =block_insert(false);
+    collision_type ct = block_insert(false);
     
     if(ct) {
         gamestate.cur_block.x -= x;
         gamestate.cur_block.y -= y;
         gamestate.cur_block.rotation = rot_prev;
         block_insert(false);
-        if(ct == COLLSION_BLOCK || ct == COLLISION_BOTTOM) {
-            gamestate.cur_block.kind = BLOCK_NONE;
-        }
+        if(freeze_on_coll) gamestate.cur_block.kind = BLOCK_NONE;
     }
 }
 
@@ -213,23 +211,27 @@ void gametick() {
         if(!termio_getch(&input))break;
         switch(input) {
             case 'a':
-                move(-1, 0, 0);
+                move(-1, 0, 0, false);
                 break;
             
             case 's':
-                move(0, 1, 0);
+                move(0, 1, 0, true);
                 break;
 
             case 'd':
-                move(1, 0, 0);
+                move(1, 0, 0, false);
                 break;
 
             case 'q':
-                 move(0, 0, 1);
+                 move(0, 0, 1, false);
                 break;
 
             case 'e':
-                 move(0, 0, -1);
+                 move(0, 0, -1, false);
+                break;
+            case 'x':
+                termio_fin();
+                exit(0);
                 break;
         } 
     }
@@ -243,7 +245,7 @@ int main() {
     init_board();
     while (true)
     {
-        move(0, 1, 0); 
+        move(0, 1, 0, true); 
         for(int i = 0; i<10;i++){
             gametick();
             render_board();
