@@ -561,14 +561,14 @@ void main(){
     \begin{codeblock} 
 char x = 'x';
 char* xp = &x; //0x7fffd164611c
-char* xpp = x + 1;  //0x7fffd164611c + 1 = 0x7fffd164611d
+char* xp2 = &x + 1;  //0x7fffd164611c + 1 = 0x7fffd164611d
     \end{codeblock} 
 
     \textbf{But:} 
     \begin{codeblock} 
 int x = 1;
 int* xp = &x; //0x7fffd164611c
-char* xpp = x + 1;  //0x7fffd164611c + 4  !!!
+int* xp2 = &x + 1;  //0x7fffd164611c + 4  !!!
     \end{codeblock}
 
     Here arrays being pointers comes up agin. 
